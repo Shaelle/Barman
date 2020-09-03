@@ -7,7 +7,9 @@ public class Drink : MonoBehaviour
 
     [SerializeField] float speed = 5f;
 
-    bool isMoving = false;
+    public enum Directions { Stop, Forward, Left, Right}
+
+    Directions direction = Directions.Stop;
 
 
 
@@ -20,18 +22,43 @@ public class Drink : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isMoving) transform.Translate(-speed * Time.deltaTime, 0, 0);
+        switch (direction)
+        {
+            case Directions.Stop:
+                break;
+
+            case Directions.Forward:
+
+                transform.Translate(-speed * Time.deltaTime, 0, 0);
+
+                break;
+
+            case Directions.Left:
+
+                transform.Translate(0, 0, -speed * Time.deltaTime);
+
+                break;
+
+            case Directions.Right:
+
+                transform.Translate(0, 0, speed * Time.deltaTime);
+
+                break;
+
+            default:
+
+                Debug.Log("Unknown direction.");
+
+                break;
+        }
+
     }
 
 
-    public void Pushing()
+    public void SetDirection(Directions moveDirection)
     {
-        isMoving = true;
+        direction = moveDirection;
     }
 
-    public void Stop()
-    {
-        isMoving = false;
-    }
 
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Stop : MonoBehaviour
 {
+    [SerializeField] LevelManager levelManager;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +21,15 @@ public class Stop : MonoBehaviour
     {
         Drink drink = other.GetComponent<Drink>();
 
-        if (drink != null) drink.Stop();
+        if (drink != null)
+        {
+
+            if (levelManager.handDirection == LevelManager.HandDirections.Left) drink.SetDirection(Drink.Directions.Left);
+            else drink.SetDirection(Drink.Directions.Right);
+
+            //drink.SetDirection(Drink.Directions.Stop);
+            levelManager.DestinationReached(drink);
+                
+        }
     }
 }

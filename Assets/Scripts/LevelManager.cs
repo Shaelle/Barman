@@ -11,10 +11,14 @@ public class LevelManager : MonoBehaviour
 
     bool isPushing = false;
 
+    public enum HandDirections { Left, Right}
+
+    public HandDirections handDirection;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        SetHandDirection();
     }
 
     // Update is called once per frame
@@ -24,12 +28,10 @@ public class LevelManager : MonoBehaviour
     }
 
 
-    void OnMove(InputValue value)
+    void OnMove(InputValue value) // Drink being pushed
     {
      
-
         Vector2 newPos = value.Get<Vector2>();
-
 
         if (newPos.y > cursorPos.y)
         {
@@ -44,15 +46,31 @@ public class LevelManager : MonoBehaviour
 
                 if (drink != null && !isPushing)
                 {
-                    drink.Pushing();
-                    //isPushing = true;
+                    drink.SetDirection(Drink.Directions.Forward);
+                    isPushing = true;
                 }
 
             }
         }
 
         cursorPos = newPos;
+    }
 
 
+
+    void SetHandDirection() // Randomly setting directions, from which a hand is coming
+    {
+        int rand = Random.Range(0, 100);
+
+        if (rand > 50) handDirection = HandDirections.Right;
+        else handDirection = HandDirections.Left;
+
+    }
+
+
+    public void DestinationReached(Drink drink) // Reached stop ("hand") trigger
+    {
+        SetHandDirection();
+        isPushing = false;
     }
 }
