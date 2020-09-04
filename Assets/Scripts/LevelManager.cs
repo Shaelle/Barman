@@ -36,6 +36,9 @@ public class LevelManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        if (drinkSlots.Length < drinks.Length) Debug.Log("Number of slots should be equal or bigger than the number of drinks!");
+
         UpdateTable();
         UpdateScore();
     }
@@ -65,7 +68,11 @@ public class LevelManager : MonoBehaviour
 
                 if (drink != null && !isPushing)
                 {
-                    drink.SetDirection(Drink.Directions.Forward);
+
+                    if (handDirection == LevelManager.HandDirections.Left) drink.SetDirection(Drink.Directions.Left);
+                    else drink.SetDirection(Drink.Directions.Right);
+
+                    //drink.SetDirection(Drink.Directions.Forward);
                     isPushing = true;
                 }
 
@@ -78,6 +85,14 @@ public class LevelManager : MonoBehaviour
 
     void PlaceDrinks()
     {
+
+        foreach (Drink drink in drinks)
+        {
+            drink.transform.position = Vector3.zero;
+            drink.transform.rotation = Quaternion.identity;
+            drink.SetDirection(Drink.Directions.Stop);
+        }
+
         Drink[] shuffledDrinks = ShuffleDrinks(drinks); // Shuffling drink on the table
 
         for (int i = 0; i < drinkSlots.Length; i++)
@@ -86,7 +101,7 @@ public class LevelManager : MonoBehaviour
             shuffledDrinks[i].correctOne = false;
         }
 
-        int n = Random.Range(0, shuffledDrinks.Length - 1); // Randomly selecting one drink as "ordered by client"
+        int n = Random.Range(0, drinkSlots.Length - 1); // Randomly selecting one drink as "ordered by client"
 
         shuffledDrinks[n].correctOne = true;
 
