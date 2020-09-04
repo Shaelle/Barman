@@ -27,7 +27,6 @@ public class Stop : MonoBehaviour
             if (levelManager.handDirection == LevelManager.HandDirections.Left) drink.SetDirection(Drink.Directions.Left);
             else drink.SetDirection(Drink.Directions.Right);
 
-            //drink.SetDirection(Drink.Directions.Stop);
             levelManager.DestinationReached(drink);
                 
         }

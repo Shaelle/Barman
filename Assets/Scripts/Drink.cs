@@ -11,7 +11,11 @@ public class Drink : MonoBehaviour
 
     Directions direction = Directions.Stop;
 
+    public bool correctOne = false;
 
+    public enum Kinds { Manhattan, Margarita, Mojito, OldFashion, Vodka}
+
+    public Kinds kind;
 
     // Start is called before the first frame update
     void Start()
