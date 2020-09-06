@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
@@ -25,10 +26,18 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI goodText;
     [SerializeField] TextMeshProUGUI badText;
+    [SerializeField] TextMeshProUGUI brokenText;
+    [SerializeField] TextMeshProUGUI moneyText;
+
+    [SerializeField] Slider slider;
+    [SerializeField] TextMeshProUGUI levelLabel;
 
 
     int goodCount = 0;
     int badCount = 0;
+    int brokenCount = 0;
+
+    int money = 0;
 
     bool isPushing = false;
 
@@ -37,6 +46,10 @@ public class LevelManager : MonoBehaviour
     public HandDirections handDirection;
 
 
+    int level = 1;
+
+    const int drinksForNextLevel = 5;
+  
 
     // Start is called before the first frame update
     void Start()
@@ -178,7 +191,8 @@ public class LevelManager : MonoBehaviour
         if (isPushing) // prevent false alarms when drinks is reordering.
         {
             isPushing = false;
-            badCount++;
+            //badCount++;
+            brokenCount++;
             UpdateScore();
 
             UpdateTable();
@@ -193,10 +207,56 @@ public class LevelManager : MonoBehaviour
     }
 
 
+    void UpdateLevelLabel(int level)
+    {
+        levelLabel.text = "Level " + level.ToString();
+    }
+
     void UpdateScore()
     {
         goodText.text = goodCount.ToString();
         badText.text = badCount.ToString();
+        brokenText.text = brokenCount.ToString();
+
+        moneyText.text = money.ToString();
+
+
+        if (!isPushing)
+        {
+            float progress = Mathf.Clamp01((float)goodCount / drinksForNextLevel);
+            slider.value = progress;
+        }
+
+        if (goodCount >= drinksForNextLevel)
+        {
+            goodCount = 0;
+            badCount = 0;
+            brokenCount = 0;
+
+            StartCoroutine(ResetSlider());
+
+            level++;
+            UpdateLevelLabel(level);
+        }
+
+
+    }
+
+
+    IEnumerator ResetSlider()
+    {
+        float temp = 1;
+        while (temp > 0)
+        {
+            isPushing = true; // prevent game from interactions while slider is reseting.
+
+            temp -= 0.1f;
+            slider.value = temp;
+            yield return new WaitForSeconds(0.1f);
+            
+
+            isPushing = false;
+        }
     }
 
 
@@ -205,6 +265,7 @@ public class LevelManager : MonoBehaviour
         if (drink.correctOne)
         {
             goodCount++;
+            money++;
         }
         else
         {
