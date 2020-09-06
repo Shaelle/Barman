@@ -14,6 +14,11 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject rightHand;
 
 
+    [SerializeField] GameObject leftTrigger;
+    [SerializeField] GameObject rightTrigger;
+
+    [SerializeField] float drinkSpeed = 5f;
+
     [SerializeField] GameObject[] drinkSlots;
     [SerializeField] Drink[] drinks;
     [SerializeField] Rotation[] targetMarks;
@@ -37,7 +42,7 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
 
-        if (drinkSlots.Length < drinks.Length) Debug.Log("Number of slots should be equal or bigger than the number of drinks!");
+        if (drinkSlots.Length > drinks.Length) Debug.Log("Number of drinks should be equal or bigger than the number of slots! Slots: " + drinkSlots.Length+", drinks: " +drinks.Length);
 
         UpdateTable();
         UpdateScore();
@@ -55,6 +60,8 @@ public class LevelManager : MonoBehaviour
      
         Vector2 newPos = value.Get<Vector2>();
 
+        float delta = newPos.x - cursorPos.x;
+
         if (newPos.y > cursorPos.y)
         {
             RaycastHit hit;
@@ -68,11 +75,8 @@ public class LevelManager : MonoBehaviour
 
                 if (drink != null && !isPushing)
                 {
+                    drink.SetDirection(drinkSpeed, delta);
 
-                    if (handDirection == LevelManager.HandDirections.Left) drink.SetDirection(Drink.Directions.Left);
-                    else drink.SetDirection(Drink.Directions.Right);
-
-                    //drink.SetDirection(Drink.Directions.Forward);
                     isPushing = true;
                 }
 
@@ -90,7 +94,7 @@ public class LevelManager : MonoBehaviour
         {
             drink.transform.position = Vector3.zero;
             drink.transform.rotation = Quaternion.identity;
-            drink.SetDirection(Drink.Directions.Stop);
+            drink.SetDirection(0, 0);
         }
 
         Drink[] shuffledDrinks = ShuffleDrinks(drinks); // Shuffling drink on the table
@@ -144,12 +148,18 @@ public class LevelManager : MonoBehaviour
             handDirection = HandDirections.Right;
             leftHand.SetActive(false);
             rightHand.SetActive(true);
+
+            leftTrigger.SetActive(false);
+            rightTrigger.SetActive(true);
         }
         else
         {
             handDirection = HandDirections.Left;
             leftHand.SetActive(true);
             rightHand.SetActive(false);
+
+            leftTrigger.SetActive(true);
+            rightTrigger.SetActive(false);
         }
 
     }
@@ -160,6 +170,19 @@ public class LevelManager : MonoBehaviour
         isPushing = false;
         CheckHit(drink);
         UpdateScore();
+    }
+
+
+    public void Miss()
+    {
+        if (isPushing) // prevent false alarms when drinks is reordering.
+        {
+            isPushing = false;
+            badCount++;
+            UpdateScore();
+
+            UpdateTable();
+        }
     }
 
 

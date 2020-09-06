@@ -12,7 +12,7 @@ public class Finish : MonoBehaviour
     {
         Drink drink = other.GetComponent<Drink>();
 
-        if (drink != null) drink.SetDirection(Drink.Directions.Stop);
+        if (drink != null) drink.SetDirection(0, 0);
 
         levelManager.DestinationReached(drink);
 
