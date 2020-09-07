@@ -22,6 +22,10 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] GameObject[] drinkSlots;
     [SerializeField] Drink[] drinks;
+
+    Drink[] shuffledDrinks;
+
+
     [SerializeField] Rotation[] targetMarks;
 
     [SerializeField] TextMeshProUGUI goodText;
@@ -40,6 +44,7 @@ public class LevelManager : MonoBehaviour
     int money = 0;
 
     bool isPushing = false;
+    bool pushPause = false;
 
     public enum HandDirections { Left, Right}
 
@@ -56,6 +61,8 @@ public class LevelManager : MonoBehaviour
     {
 
         if (drinkSlots.Length > drinks.Length) Debug.Log("Number of drinks should be equal or bigger than the number of slots! Slots: " + drinkSlots.Length+", drinks: " +drinks.Length);
+
+        ShuffleDrinks(drinks);
 
         UpdateTable();
         UpdateScore();
@@ -110,8 +117,7 @@ public class LevelManager : MonoBehaviour
             drink.SetDirection(0, 0);
         }
 
-        Drink[] shuffledDrinks = ShuffleDrinks(drinks); // Shuffling drink on the table
-
+        
         for (int i = 0; i < drinkSlots.Length; i++)
         {
             shuffledDrinks[i].transform.position = drinkSlots[i].transform.position;
@@ -135,7 +141,7 @@ public class LevelManager : MonoBehaviour
 
 
 
-    private Drink[] ShuffleDrinks(Drink[] drinks)
+    private void ShuffleDrinks(Drink[] drinks)
     {
         Drink[] newArray = drinks.Clone() as Drink[];
 
@@ -147,7 +153,7 @@ public class LevelManager : MonoBehaviour
             newArray[r] = tmp;
         }
 
-        return newArray;
+        shuffledDrinks = newArray;
     }
 
 
@@ -180,7 +186,8 @@ public class LevelManager : MonoBehaviour
 
     public void DestinationReached(Drink drink) // Reached stop ("hand") trigger
     {
-        isPushing = false;
+        StartCoroutine(ResetPushing());
+        //isPushing = false;
         CheckHit(drink);
         UpdateScore();
     }
@@ -190,7 +197,8 @@ public class LevelManager : MonoBehaviour
     {
         if (isPushing) // prevent false alarms when drinks is reordering.
         {
-            isPushing = false;
+            StartCoroutine(ResetPushing());
+            //isPushing = false;
             //badCount++;
             brokenCount++;
             UpdateScore();
@@ -237,9 +245,17 @@ public class LevelManager : MonoBehaviour
 
             level++;
             UpdateLevelLabel(level);
+            ShuffleDrinks(drinks); // New level - shuffling drinks.
         }
 
 
+    }
+
+
+    IEnumerator ResetPushing() // Pause after finishing pushing to prevent accidental activation
+    {
+        yield return new WaitForSeconds(0.5f);
+        isPushing = false;
     }
 
 
