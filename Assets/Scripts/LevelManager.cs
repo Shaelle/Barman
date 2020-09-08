@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -28,9 +29,7 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] Rotation[] targetMarks;
 
-    [SerializeField] TextMeshProUGUI goodText;
-    [SerializeField] TextMeshProUGUI badText;
-    [SerializeField] TextMeshProUGUI brokenText;
+    [SerializeField] TextMeshProUGUI progressText;
     [SerializeField] TextMeshProUGUI moneyText;
 
     [SerializeField] GameObject caseButton;
@@ -45,11 +44,16 @@ public class LevelManager : MonoBehaviour
     [SerializeField] AudioSource startMelody;
 
 
+
+    [SerializeField] AudioSource thanks;
+    [SerializeField] [Range(1, 100)] int thanksChance = 40;
+
+
     int goodCount = 0;
     int badCount = 0;
     int brokenCount = 0;
 
-    int money = 0;
+    public static int money = 0;
 
     bool isPushing = false;
     bool pushPause = false;
@@ -57,7 +61,7 @@ public class LevelManager : MonoBehaviour
     bool levelActive = false;
 
 
-    int level = 1;
+    static int level = 1;
 
     
 
@@ -79,6 +83,7 @@ public class LevelManager : MonoBehaviour
         Initlevel();
 
     }
+
 
     // Update is called once per frame
     void Update()
@@ -205,6 +210,12 @@ public class LevelManager : MonoBehaviour
     }
 
 
+    public void GoToShop()
+    {
+        SceneManager.LoadScene(1);
+    }
+
+
     void OnMove(InputValue value) // Drink being pushed
     {
      
@@ -226,6 +237,9 @@ public class LevelManager : MonoBehaviour
                 if (drink != null && !isPushing)
                 {
                     drink.SetDirection(drinkSpeed, delta);
+
+                    drink.StartMove();
+                      
 
                     isPushing = true;
                 }
@@ -356,10 +370,8 @@ public class LevelManager : MonoBehaviour
 
     void UpdateScore()
     {
-        goodText.text = goodCount.ToString();
-        badText.text = badCount.ToString();
-        brokenText.text = brokenCount.ToString();
 
+        progressText.text = goodCount.ToString() + " / " + drinksForNextLevel.ToString();
         moneyText.text = money.ToString();
 
 
@@ -389,6 +401,8 @@ public class LevelManager : MonoBehaviour
     {
         if (drink.correctOne)
         {
+            if (Random.Range(0, 100) <= thanksChance) thanks.Play(); 
+
             goodCount++;
             money++;
         }

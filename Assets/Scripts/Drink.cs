@@ -12,12 +12,13 @@ public class Drink : MonoBehaviour
     [SerializeField] Transform destinationRight;
 
 
-    [SerializeField] GameObject broken;
+    [SerializeField] AudioSource broken;
+    [SerializeField] AudioSource start;
 
 
     public bool correctOne = false;
 
-    public enum Kinds { Manhattan, Margarita, Mojito, OldFashion, Vodka}
+    public enum Kinds { Manhattan, Margarita, Mojito, OldFashion, Vodka, Drink1, Drink2}
 
     public Kinds kind;
 
@@ -30,7 +31,6 @@ public class Drink : MonoBehaviour
     void Start()
     {
         currentSpeed = sideSpeed;
-        broken.SetActive(false);
     }
 
 
@@ -57,9 +57,15 @@ public class Drink : MonoBehaviour
 
     public void Broken()
     {
-        broken.SetActive(true);
-        broken.GetComponent<AudioSource>().Play();
+        broken.Play();
     }
+
+    public void StartMove()
+    {
+        start.Play();
+    }
+
+
 
 
 
