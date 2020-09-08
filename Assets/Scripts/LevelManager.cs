@@ -8,7 +8,14 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
+    public static int money = 0;
 
+    public static int level = 1;
+
+    public static int updgrades = 0;
+    public static int upgradeParts = 0;
+
+    const int fullUpgradeParts = 5;
 
     Vector2 cursorPos;
 
@@ -32,6 +39,10 @@ public class LevelManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI progressText;
     [SerializeField] TextMeshProUGUI moneyText;
 
+    [SerializeField] TextMeshProUGUI updgradesText;
+    [SerializeField] TextMeshProUGUI updgradesPartsText;
+    [SerializeField] GameObject getUpdgradeButton;
+
     [SerializeField] GameObject caseButton;
 
     [SerializeField] GameObject nextlevelButton;
@@ -53,17 +64,13 @@ public class LevelManager : MonoBehaviour
     int badCount = 0;
     int brokenCount = 0;
 
-    public static int money = 0;
-
     bool isPushing = false;
     bool pushPause = false;
 
+    bool isGetUpdgrade = false;
+
     bool levelActive = false;
-
-
-    static int level = 1;
-
-    
+   
 
     const int drinksForNextLevel = 5;
 
@@ -107,12 +114,15 @@ public class LevelManager : MonoBehaviour
         caseButton.SetActive(true);
         finishedLabel.SetActive(false);
 
+
         if (nextLevelLabel == null) Debug.LogError("No text component for level label");
 
         nextLevelLabel.text = "Day " + level.ToString();
         nextlevelButton.SetActive(true);
 
         ResetLevel();
+
+        moneyText.text = money.ToString();
 
     }
 
@@ -157,7 +167,7 @@ public class LevelManager : MonoBehaviour
     IEnumerator Finishinglevel()
     {
 
-        caseButton.SetActive(true);
+        //caseButton.SetActive(true);
 
         ResetLevel();
 
@@ -169,14 +179,25 @@ public class LevelManager : MonoBehaviour
      
         finishedLabel.SetActive(true);
 
+        isGetUpdgrade = true;
+
+        updgradesText.gameObject.SetActive(true);
+        updgradesPartsText.gameObject.SetActive(true);
+        getUpdgradeButton.SetActive(true);
+
+        updgradesText.text = updgrades.ToString();
+        updgradesPartsText.text = upgradeParts.ToString() + " / " + fullUpgradeParts;
+
         yield return new WaitForSeconds(1.5f);
 
         winParticles.Stop();
 
 
-        Initlevel();
+        //Initlevel();
 
     }
+
+
 
 
 
@@ -190,6 +211,10 @@ public class LevelManager : MonoBehaviour
 
         leftHand.SetActive(false);
         leftTrigger.SetActive(false);
+
+        updgradesText.gameObject.SetActive(false);
+        updgradesPartsText.gameObject.SetActive(false);
+        getUpdgradeButton.SetActive(false);
 
         winParticles.Stop();
 
@@ -410,6 +435,39 @@ public class LevelManager : MonoBehaviour
         {
             badCount++;
         }
+    }
+
+
+    public void GetUpgrade()
+    {
+
+        if (isGetUpdgrade)
+        {
+            isGetUpdgrade = false;
+
+            upgradeParts++;
+
+            if (upgradeParts >= fullUpgradeParts)
+            {
+                upgradeParts = 0;
+                updgrades++;
+            }
+
+            updgradesText.text = updgrades.ToString();
+            updgradesPartsText.text = upgradeParts.ToString() + " / " + fullUpgradeParts;
+
+            StartCoroutine(GetUpdgradeTimer());
+        }
+    }
+
+
+    IEnumerator GetUpdgradeTimer()
+    {
+
+        yield return new WaitForSeconds(1.5f);
+
+        Initlevel();
+
     }
 
 }

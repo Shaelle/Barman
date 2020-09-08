@@ -12,7 +12,7 @@ public class Shop : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        UpdateCoinsText();
     }
 
     // Update is called once per frame
@@ -24,6 +24,7 @@ public class Shop : MonoBehaviour
 
     void UpdateCoinsText()
     {
+
         coinsText.text = LevelManager.money.ToString();
     }
 
