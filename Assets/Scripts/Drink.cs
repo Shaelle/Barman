@@ -12,6 +12,9 @@ public class Drink : MonoBehaviour
     [SerializeField] Transform destinationRight;
 
 
+    [SerializeField] GameObject broken;
+
+
     public bool correctOne = false;
 
     public enum Kinds { Manhattan, Margarita, Mojito, OldFashion, Vodka}
@@ -22,11 +25,12 @@ public class Drink : MonoBehaviour
     float currentSpeed;
     float acceleration = 0;
 
-
+ 
     // Start is called before the first frame update
     void Start()
     {
         currentSpeed = sideSpeed;
+        broken.SetActive(false);
     }
 
 
@@ -49,6 +53,14 @@ public class Drink : MonoBehaviour
 
         acceleration = -sideAcceleration / 20;
     }
+
+
+    public void Broken()
+    {
+        broken.SetActive(true);
+        broken.GetComponent<AudioSource>().Play();
+    }
+
 
 
 }

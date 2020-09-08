@@ -10,14 +10,12 @@ public class Finish : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+
         Drink drink = other.GetComponent<Drink>();
 
         if (drink != null) drink.SetDirection(0, 0);
 
         levelManager.DestinationReached(drink);
 
-        levelManager.UpdateTable();
-
-        //SceneManager.LoadScene(0);
     }
 }

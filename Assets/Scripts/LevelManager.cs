@@ -33,8 +33,16 @@ public class LevelManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI brokenText;
     [SerializeField] TextMeshProUGUI moneyText;
 
-    [SerializeField] Slider slider;
-    [SerializeField] TextMeshProUGUI levelLabel;
+    [SerializeField] GameObject caseButton;
+
+    [SerializeField] GameObject nextlevelButton;
+    TextMeshProUGUI nextLevelLabel;
+
+    [SerializeField] GameObject finishedLabel;
+
+    [SerializeField] ParticleSystem winParticles;
+
+    [SerializeField] AudioSource startMelody;
 
 
     int goodCount = 0;
@@ -46,32 +54,154 @@ public class LevelManager : MonoBehaviour
     bool isPushing = false;
     bool pushPause = false;
 
-    public enum HandDirections { Left, Right}
-
-    public HandDirections handDirection;
+    bool levelActive = false;
 
 
     int level = 1;
 
+    
+
     const int drinksForNextLevel = 5;
-  
+
+
+
+    private void Awake()
+    {
+        nextLevelLabel = nextlevelButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
 
-        if (drinkSlots.Length > drinks.Length) Debug.Log("Number of drinks should be equal or bigger than the number of slots! Slots: " + drinkSlots.Length+", drinks: " +drinks.Length);
+        if (drinkSlots.Length > drinks.Length) Debug.LogWarning("Number of drinks should be equal or bigger than the number of slots! Slots: " + drinkSlots.Length+", drinks: " +drinks.Length);
 
-        ShuffleDrinks(drinks);
+        Initlevel();
 
-        UpdateTable();
-        UpdateScore();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+
+    public void Initlevel()
+    {
+
+        levelActive = false;
+
+        startMelody.gameObject.SetActive(true);
+
+
+        goodCount = 0;
+        badCount = 0;
+        brokenCount = 0;
+       
+        caseButton.SetActive(true);
+        finishedLabel.SetActive(false);
+
+        if (nextLevelLabel == null) Debug.LogError("No text component for level label");
+
+        nextLevelLabel.text = "Day " + level.ToString();
+        nextlevelButton.SetActive(true);
+
+        ResetLevel();
+
+    }
+
+
+    public void StartLevel()
+    {
+
+        levelActive = true;
+
+        startMelody.gameObject.SetActive(false);
+
+        caseButton.SetActive(false);
+        finishedLabel.SetActive(false);
+
+        nextlevelButton.SetActive(false);
+
+        isPushing = false;
+
+        foreach (Drink drink in drinks)
+        {
+            drink.gameObject.SetActive(true);
+        }
+
+
+        ShuffleDrinks(drinks);
+       
+        UpdateTable();
+        UpdateScore();
+       
+    }
+
+
+    public void FinishLevel()
+    {
+
+        levelActive = false;
+        StartCoroutine(Finishinglevel());
+    }
+
+
+
+    IEnumerator Finishinglevel()
+    {
+
+        caseButton.SetActive(true);
+
+        ResetLevel();
+
+        winParticles.Play();
+
+        // some animations here
+
+        yield return new WaitForSeconds(0.2f);
+     
+        finishedLabel.SetActive(true);
+
+        yield return new WaitForSeconds(1.5f);
+
+        winParticles.Stop();
+
+
+        Initlevel();
+
+    }
+
+
+
+    void ResetLevel()
+    {
+
+        isPushing = true;
+
+        rightHand.SetActive(false);
+        rightTrigger.SetActive(false);
+
+        leftHand.SetActive(false);
+        leftTrigger.SetActive(false);
+
+        winParticles.Stop();
+
+ 
+        foreach (Drink drink in drinks)
+        {
+            drink.SetDirection(0, 0);
+            drink.transform.position = Vector3.zero;
+            drink.gameObject.SetActive(false);
+        }
+
+
+        foreach (Rotation mark in targetMarks)
+        {
+            mark.gameObject.SetActive(false);
+        }
+
     }
 
 
@@ -162,22 +292,23 @@ public class LevelManager : MonoBehaviour
     {
         int rand = Random.Range(0, 100);
 
+
         if (rand > 50)
         {
-            handDirection = HandDirections.Right;
-            leftHand.SetActive(false);
             rightHand.SetActive(true);
-
-            leftTrigger.SetActive(false);
             rightTrigger.SetActive(true);
+
+            leftHand.SetActive(false);          
+            leftTrigger.SetActive(false);
+            
         }
         else
         {
-            handDirection = HandDirections.Left;
-            leftHand.SetActive(true);
-            rightHand.SetActive(false);
 
+            leftHand.SetActive(true);
             leftTrigger.SetActive(true);
+
+            rightHand.SetActive(false);           
             rightTrigger.SetActive(false);
         }
 
@@ -186,10 +317,15 @@ public class LevelManager : MonoBehaviour
 
     public void DestinationReached(Drink drink) // Reached stop ("hand") trigger
     {
+
         StartCoroutine(ResetPushing());
         //isPushing = false;
+
         CheckHit(drink);
         UpdateScore();
+
+        UpdateTable();
+
     }
 
 
@@ -210,15 +346,13 @@ public class LevelManager : MonoBehaviour
 
     public void UpdateTable()
     {
-        SetHandDirection();
-        PlaceDrinks();
+        if (levelActive)
+        {
+            SetHandDirection();
+            PlaceDrinks();
+        }
     }
 
-
-    void UpdateLevelLabel(int level)
-    {
-        levelLabel.text = "Level " + level.ToString();
-    }
 
     void UpdateScore()
     {
@@ -229,23 +363,14 @@ public class LevelManager : MonoBehaviour
         moneyText.text = money.ToString();
 
 
-        if (!isPushing)
-        {
-            float progress = Mathf.Clamp01((float)goodCount / drinksForNextLevel);
-            slider.value = progress;
-        }
-
         if (goodCount >= drinksForNextLevel)
         {
-            goodCount = 0;
-            badCount = 0;
-            brokenCount = 0;
 
-            StartCoroutine(ResetSlider());
 
             level++;
-            UpdateLevelLabel(level);
-            ShuffleDrinks(drinks); // New level - shuffling drinks.
+            FinishLevel();
+
+            //ShuffleDrinks(drinks); // New level - shuffling drinks.
         }
 
 
@@ -254,25 +379,9 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator ResetPushing() // Pause after finishing pushing to prevent accidental activation
     {
+
         yield return new WaitForSeconds(0.5f);
         isPushing = false;
-    }
-
-
-    IEnumerator ResetSlider()
-    {
-        float temp = 1;
-        while (temp > 0)
-        {
-            isPushing = true; // prevent game from interactions while slider is reseting.
-
-            temp -= 0.1f;
-            slider.value = temp;
-            yield return new WaitForSeconds(0.1f);
-            
-
-            isPushing = false;
-        }
     }
 
 

@@ -9,6 +9,11 @@ public class Miss : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+
+        Drink drink = other.GetComponent<Drink>();
+
+        if (drink != null) drink.Broken();
+
         levelManager.Miss();
     }
 }
