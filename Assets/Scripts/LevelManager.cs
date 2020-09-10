@@ -382,7 +382,7 @@ public class LevelManager : MonoBehaviour
         int rand = Random.Range(0, 100);
 
 
-        if (rand > 25) // 0 - 25 far right
+        if (rand < 25) // 0 - 25 far right
         {
             rightHand.SetActive(true); //TODO: simplify with new prefabs
             rightTrigger.SetActive(true);
@@ -397,7 +397,7 @@ public class LevelManager : MonoBehaviour
             leftTrigger2.SetActive(false);
 
         }
-        else if (rand > 50) // 25 - 50 far left
+        else if (rand < 50) // 25 - 50 far left
         {
 
             leftHand.SetActive(true);
@@ -412,7 +412,7 @@ public class LevelManager : MonoBehaviour
             leftHand2.SetActive(false);
             leftTrigger2.SetActive(false);
         }
-        else if (rand > 75) // 50 - 75 close right
+        else if (rand < 75) // 50 - 75 close right
         {
 
             leftHand.SetActive(false);
