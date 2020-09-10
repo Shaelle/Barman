@@ -51,7 +51,17 @@ public class Drink : MonoBehaviour
 
         speed = initialspeed;
 
-        acceleration = -sideAcceleration / 20;
+        /*if (sideAcceleration != 0)
+        {
+            Debug.Log(sideAcceleration);
+
+
+            sideAcceleration = (sideAcceleration > 0) ? 1 : -1;
+        }
+
+        acceleration = -sideAcceleration / 20;*/
+
+        acceleration = -sideAcceleration;
     }
 
 

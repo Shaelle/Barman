@@ -59,6 +59,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] AudioSource thanks;
     [SerializeField] [Range(1, 100)] int thanksChance = 40;
 
+    [SerializeField] float sensitivity = 10;
+
 
     int goodCount = 0;
     int badCount = 0;
@@ -66,6 +68,11 @@ public class LevelManager : MonoBehaviour
 
     bool isPushing = false;
     bool pushPause = false;
+
+
+    bool isPressed = false;
+    Drink touchedDrink;
+    Vector2 touchedStart;
 
     bool isGetUpdgrade = false;
 
@@ -235,45 +242,76 @@ public class LevelManager : MonoBehaviour
     }
 
 
+
     public void GoToShop()
     {
         SceneManager.LoadScene(1);
     }
 
 
+
+    void OnPress(InputValue value)
+    {
+        isPressed = value.isPressed;
+
+        if (!value.isPressed && touchedDrink != null)
+        {
+
+            
+
+            if (!isPushing && cursorPos.y > touchedStart.y)
+            {
+
+                float delta = cursorPos.x - touchedStart.x;
+                float distance = cursorPos.y - touchedStart.y;
+                float acceleration = (delta / distance) / sensitivity;
+                
+                //touchedDrink.SetDirection(drinkSpeed, delta);
+                touchedDrink.SetDirection(drinkSpeed, acceleration);
+                touchedDrink.StartMove();
+                isPushing = true;
+            }
+
+            touchedDrink = null;
+
+        }
+    }
+
+
+
     void OnMove(InputValue value) // Drink being pushed
     {
-     
-        Vector2 newPos = value.Get<Vector2>();
 
-        float delta = newPos.x - cursorPos.x;
-
-        if (newPos.y > cursorPos.y)
+        if (isPressed)
         {
-            RaycastHit hit;
 
-            Ray ray = Camera.main.ScreenPointToRay(newPos);
-            if (Physics.Raycast(ray, out hit))
+            Vector2 newPos = value.Get<Vector2>();
+
+            if (touchedDrink == null)
             {
-                GameObject hitObject = hit.transform.gameObject;
 
-                Drink drink = hitObject.GetComponent<Drink>();
+                RaycastHit hit;
 
-                if (drink != null && !isPushing)
+                Ray ray = Camera.main.ScreenPointToRay(newPos);
+                if (Physics.Raycast(ray, out hit))
                 {
-                    drink.SetDirection(drinkSpeed, delta);
+                    GameObject hitObject = hit.transform.gameObject;
 
-                    drink.StartMove();
-                      
+                    Drink drink = hitObject.GetComponent<Drink>();
 
-                    isPushing = true;
+                    if (drink != null)
+                    {
+                        touchedDrink = drink;
+                        touchedStart = newPos;
+                    }
+
                 }
-
             }
-        }
 
-        cursorPos = newPos;
+            cursorPos = newPos;
+        }
     }
+
 
 
     void PlaceDrinks()
