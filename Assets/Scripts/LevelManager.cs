@@ -19,12 +19,17 @@ public class LevelManager : MonoBehaviour
 
     Vector2 cursorPos;
 
-    [SerializeField] GameObject leftHand;
+    [SerializeField] GameObject leftHand; //TODO: array of new prefabs
+    [SerializeField] GameObject leftHand2;
     [SerializeField] GameObject rightHand;
+    [SerializeField] GameObject rightHand2;
 
 
     [SerializeField] GameObject leftTrigger;
+    [SerializeField] GameObject leftTrigger2;
     [SerializeField] GameObject rightTrigger;
+    [SerializeField] GameObject rightTrigger2;
+
 
     [SerializeField] float drinkSpeed = 5f;
 
@@ -219,6 +224,13 @@ public class LevelManager : MonoBehaviour
         leftHand.SetActive(false);
         leftTrigger.SetActive(false);
 
+
+        rightHand2.SetActive(false);
+        rightTrigger2.SetActive(false);
+
+        leftHand2.SetActive(false);
+        leftTrigger2.SetActive(false);
+
         updgradesText.gameObject.SetActive(false);
         updgradesPartsText.gameObject.SetActive(false);
         getUpdgradeButton.SetActive(false);
@@ -370,16 +382,22 @@ public class LevelManager : MonoBehaviour
         int rand = Random.Range(0, 100);
 
 
-        if (rand > 50)
+        if (rand > 25) // 0 - 25 far right
         {
-            rightHand.SetActive(true);
+            rightHand.SetActive(true); //TODO: simplify with new prefabs
             rightTrigger.SetActive(true);
 
             leftHand.SetActive(false);          
             leftTrigger.SetActive(false);
-            
+
+            rightHand2.SetActive(false);
+            rightTrigger2.SetActive(false);
+
+            leftHand2.SetActive(false);
+            leftTrigger2.SetActive(false);
+
         }
-        else
+        else if (rand > 50) // 25 - 50 far left
         {
 
             leftHand.SetActive(true);
@@ -387,6 +405,41 @@ public class LevelManager : MonoBehaviour
 
             rightHand.SetActive(false);           
             rightTrigger.SetActive(false);
+
+            rightHand2.SetActive(false);
+            rightTrigger2.SetActive(false);
+
+            leftHand2.SetActive(false);
+            leftTrigger2.SetActive(false);
+        }
+        else if (rand > 75) // 50 - 75 close right
+        {
+
+            leftHand.SetActive(false);
+            leftTrigger.SetActive(false);
+
+            rightHand.SetActive(false);
+            rightTrigger.SetActive(false);
+
+            rightHand2.SetActive(true);
+            rightTrigger2.SetActive(true);
+
+            leftHand2.SetActive(false);
+            leftTrigger2.SetActive(false);
+        }
+        else // rest - close left
+        {
+            leftHand.SetActive(false);
+            leftTrigger.SetActive(false);
+
+            rightHand.SetActive(false);
+            rightTrigger.SetActive(false);
+
+            rightHand2.SetActive(false);
+            rightTrigger2.SetActive(false);
+
+            leftHand2.SetActive(true);
+            leftTrigger2.SetActive(true);
         }
 
     }
