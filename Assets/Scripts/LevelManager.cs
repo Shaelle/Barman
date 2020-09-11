@@ -34,7 +34,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] float drinkSpeed = 5f;
 
     [SerializeField] GameObject[] drinkSlots;
+
     [SerializeField] Drink[] drinks;
+    [SerializeField] Sprite[] drinkIcons;
 
     Drink[] shuffledDrinks;
 
@@ -47,6 +49,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI updgradesText;
     [SerializeField] TextMeshProUGUI updgradesPartsText;
     [SerializeField] GameObject getUpdgradeButton;
+
+    [SerializeField] Image drinkHint;
 
     [SerializeField] GameObject caseButton;
 
@@ -146,6 +150,9 @@ public class LevelManager : MonoBehaviour
 
         startMelody.gameObject.SetActive(false);
 
+
+        //drinkHint.gameObject.SetActive(true);
+
         caseButton.SetActive(false);
         finishedLabel.SetActive(false);
 
@@ -220,6 +227,8 @@ public class LevelManager : MonoBehaviour
 
         rightHand.SetActive(false);
         rightTrigger.SetActive(false);
+
+        drinkHint.gameObject.SetActive(false);
 
         leftHand.SetActive(false);
         leftTrigger.SetActive(false);
@@ -346,6 +355,8 @@ public class LevelManager : MonoBehaviour
         int n = Random.Range(0, drinkSlots.Length - 1); // Randomly selecting one drink as "ordered by client"
 
         shuffledDrinks[n].correctOne = true;
+
+        drinkHint.sprite = drinkIcons[n];
 
         Drink.Kinds kind = shuffledDrinks[n].kind;
 
