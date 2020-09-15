@@ -151,7 +151,7 @@ public class LevelManager : MonoBehaviour
         startMelody.gameObject.SetActive(false);
 
 
-        //drinkHint.gameObject.SetActive(true);
+        drinkHint.gameObject.SetActive(true);
 
         caseButton.SetActive(false);
         finishedLabel.SetActive(false);
