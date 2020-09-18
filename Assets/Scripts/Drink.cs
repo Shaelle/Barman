@@ -18,7 +18,7 @@ public class Drink : MonoBehaviour
 
     public bool correctOne = false;
 
-    public enum Kinds { Manhattan, Margarita, Mojito, OldFashion, Vodka, Drink1, Drink2}
+    public enum Kinds { Manhattan, Margarita, Mojito, OldFashion, Vodka, Drink1, Drink2, Cola}
 
     public Kinds kind;
 

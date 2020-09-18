@@ -19,6 +19,8 @@ public class LevelManager : MonoBehaviour
 
     Vector2 cursorPos;
 
+    [Header("General")]
+
     [SerializeField] GameObject leftHand; //TODO: array of new prefabs
     [SerializeField] GameObject leftHand2;
     [SerializeField] GameObject rightHand;
@@ -30,6 +32,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject rightTrigger;
     [SerializeField] GameObject rightTrigger2;
 
+    [Header("Drinks")]
 
     [SerializeField] float drinkSpeed = 5f;
 
@@ -42,6 +45,8 @@ public class LevelManager : MonoBehaviour
 
 
     [SerializeField] Rotation[] targetMarks;
+
+    [Header("UI")]
 
     [SerializeField] TextMeshProUGUI progressText;
     [SerializeField] TextMeshProUGUI moneyText;
@@ -59,16 +64,35 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] GameObject finishedLabel;
 
+    [Header("Particles")]
+
     [SerializeField] ParticleSystem winParticles;
+    [SerializeField] ParticleSystem wrongParticles;
+    [SerializeField] ParticleSystem smileParticles;
+    [SerializeField] ParticleSystem angryParticles;
+
+    [Header("Audio")]
 
     [SerializeField] AudioSource startMelody;
-
-
-
     [SerializeField] AudioSource thanks;
+
+    [Header("Coins")]
+
+    [SerializeField] int minCoins = 10;
+    [SerializeField] int maxCoins = 40;
+
+    [SerializeField] int minLevelBonus = 60;
+    [SerializeField] int maxLevelBonus = 150;
+
+    [SerializeField] int bonusThreshold = 3;
+
+    [Header("Other")]
+
     [SerializeField] [Range(1, 100)] int thanksChance = 40;
 
     [SerializeField] float sensitivity = 10;
+
+    [SerializeField] Tracer[] tracers;
 
 
     int goodCount = 0;
@@ -88,7 +112,11 @@ public class LevelManager : MonoBehaviour
     bool levelActive = false;
    
 
-    const int drinksForNextLevel = 5;
+    [SerializeField] int minDrinksForNextLevel = 4;
+    [SerializeField] int maxDrinksForNextLevel = 7;
+
+
+    int drinksForNextLevel = 5;
 
 
 
@@ -140,6 +168,9 @@ public class LevelManager : MonoBehaviour
 
         moneyText.text = money.ToString();
 
+        drinksForNextLevel = Random.Range(minDrinksForNextLevel, maxDrinksForNextLevel);
+
+
     }
 
 
@@ -151,7 +182,7 @@ public class LevelManager : MonoBehaviour
         startMelody.gameObject.SetActive(false);
 
 
-        drinkHint.gameObject.SetActive(true);
+        //drinkHint.gameObject.SetActive(true);
 
         caseButton.SetActive(false);
         finishedLabel.SetActive(false);
@@ -177,6 +208,12 @@ public class LevelManager : MonoBehaviour
     public void FinishLevel()
     {
 
+        if (badCount + brokenCount <= bonusThreshold)
+        {
+            //money += Random.Range(minLevelBonus, maxLevelBonus);
+            //UpdateScore();
+        }
+
         levelActive = false;
         StartCoroutine(Finishinglevel());
     }
@@ -194,7 +231,7 @@ public class LevelManager : MonoBehaviour
 
         // some animations here
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(1.5f);
      
         finishedLabel.SetActive(true);
 
@@ -245,8 +282,12 @@ public class LevelManager : MonoBehaviour
         getUpdgradeButton.SetActive(false);
 
         winParticles.Stop();
+        wrongParticles.Stop();
 
- 
+        smileParticles.Stop();
+        angryParticles.Stop();
+
+
         foreach (Drink drink in drinks)
         {
             drink.SetDirection(0, 0);
@@ -258,6 +299,12 @@ public class LevelManager : MonoBehaviour
         foreach (Rotation mark in targetMarks)
         {
             mark.gameObject.SetActive(false);
+        }
+
+
+        foreach (Tracer tracer in tracers)
+        {
+            TracerReset(tracer);
         }
 
     }
@@ -286,11 +333,21 @@ public class LevelManager : MonoBehaviour
                 float delta = cursorPos.x - touchedStart.x;
                 float distance = cursorPos.y - touchedStart.y;
                 float acceleration = (delta / distance) / sensitivity;
+
+                Time.timeScale = 1;
+
                 
                 //touchedDrink.SetDirection(drinkSpeed, delta);
                 touchedDrink.SetDirection(drinkSpeed, acceleration);
                 touchedDrink.StartMove();
                 isPushing = true;
+
+                foreach (Tracer tracer in tracers)
+                {
+                    TracerReset(tracer);
+                }
+                
+                
             }
 
             touchedDrink = null;
@@ -298,6 +355,45 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+
+
+
+    public void TracerReset(Tracer tracer)
+    {
+
+
+        if (touchedDrink != null)
+        {
+            tracer.GoToStart(touchedDrink.transform.position);
+            tracer.lastStart = touchedDrink.transform.position;
+        }
+
+    }
+
+
+    IEnumerator SendTracer()
+    {
+
+        while (touchedDrink != null)
+        {
+
+            for (int i = 0; i < tracers.Length; i++)
+            {
+
+                TracerReset(tracers[i]);
+
+                float delta = cursorPos.x - touchedStart.x;
+                float distance = cursorPos.y - touchedStart.y;
+                float acceleration = (delta / distance) / sensitivity;
+                tracers[i].SetDirection(drinkSpeed, acceleration);
+
+                yield return new WaitForSeconds(0.4f);
+
+                //TracerReset(tracers[i]);
+
+            }
+        }
+    }
 
 
     void OnMove(InputValue value) // Drink being pushed
@@ -324,9 +420,12 @@ public class LevelManager : MonoBehaviour
                     {
                         touchedDrink = drink;
                         touchedStart = newPos;
+
+                        StartCoroutine(SendTracer());
                     }
 
                 }
+
             }
 
             cursorPos = newPos;
@@ -458,6 +557,7 @@ public class LevelManager : MonoBehaviour
 
     public void DestinationReached(Drink drink) // Reached stop ("hand") trigger
     {
+        Debug.Log("Destination Reached");
 
         StartCoroutine(ResetPushing());
         //isPushing = false;
@@ -478,6 +578,10 @@ public class LevelManager : MonoBehaviour
             //isPushing = false;
             //badCount++;
             brokenCount++;
+
+            wrongParticles.Play();
+            angryParticles.Play();
+
             UpdateScore();
 
             UpdateTable();
@@ -519,22 +623,31 @@ public class LevelManager : MonoBehaviour
     IEnumerator ResetPushing() // Pause after finishing pushing to prevent accidental activation
     {
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.1f);
         isPushing = false;
     }
 
 
     public void CheckHit(Drink drink)
     {
+        Debug.Log("Check hit " + drink.name);
+
         if (drink.correctOne)
         {
             if (Random.Range(0, 100) <= thanksChance) thanks.Play(); 
 
             goodCount++;
-            money++;
+            money += Random.Range(minCoins, maxCoins);
+
+            smileParticles.Play();
+            wrongParticles.Stop();
         }
         else
         {
+            angryParticles.Play();
+            wrongParticles.Play();
+
+
             badCount++;
         }
     }
