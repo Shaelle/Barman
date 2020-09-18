@@ -231,25 +231,56 @@ public class LevelManager : MonoBehaviour
 
         // some animations here
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2f);
+
      
         finishedLabel.SetActive(true);
 
-        isGetUpdgrade = true;
+        //isGetUpdgrade = true;
+
 
         updgradesText.gameObject.SetActive(true);
-        updgradesPartsText.gameObject.SetActive(true);
+
         getUpdgradeButton.SetActive(true);
 
+
+        Image upImage = getUpdgradeButton.GetComponent<Image>();
+
+        if (upImage == null) Debug.LogError("Upgrade button's image not found.");
+        
+        int addPerc = Random.Range(20, 40);
+
+        for (int i = 0; i <= addPerc; i++)
+        {
+            float newFill = Mathf.Clamp(upImage.fillAmount + 0.01f, 0, 1);
+            upImage.fillAmount = newFill;
+
+            yield return new WaitForSeconds(0.1f);
+
+            if (upImage.fillAmount == 1)
+            {
+                var temp = upImage.color;
+                temp.a = 1f;            
+                upImage.color = temp;
+
+                break;
+            }
+        }
+
+        isGetUpdgrade = (upImage.fillAmount == 1) ? true : false;
+
+        
+        //updgradesPartsText.gameObject.SetActive(true);
+        
+
         updgradesText.text = updgrades.ToString();
-        updgradesPartsText.text = upgradeParts.ToString() + " / " + fullUpgradeParts;
+        //updgradesPartsText.text = upgradeParts.ToString() + " / " + fullUpgradeParts;
 
         yield return new WaitForSeconds(1.5f);
 
         winParticles.Stop();
 
-
-        //Initlevel();
+        if (!isGetUpdgrade) Initlevel();
 
     }
 
@@ -306,6 +337,7 @@ public class LevelManager : MonoBehaviour
         {
             TracerReset(tracer);
         }
+
 
     }
 
@@ -557,7 +589,6 @@ public class LevelManager : MonoBehaviour
 
     public void DestinationReached(Drink drink) // Reached stop ("hand") trigger
     {
-        Debug.Log("Destination Reached");
 
         StartCoroutine(ResetPushing());
         //isPushing = false;
@@ -660,26 +691,31 @@ public class LevelManager : MonoBehaviour
         {
             isGetUpdgrade = false;
 
-            upgradeParts++;
+            Image upImage = getUpdgradeButton.GetComponent<Image>();
 
-            if (upgradeParts >= fullUpgradeParts)
-            {
-                upgradeParts = 0;
-                updgrades++;
-            }
+            if (upImage == null) Debug.LogError("Upgrade button's image not found.");
+
+            if (upImage.fillAmount != 1) return;
+          
+            updgrades++;
 
             updgradesText.text = updgrades.ToString();
-            updgradesPartsText.text = upgradeParts.ToString() + " / " + fullUpgradeParts;
 
-            StartCoroutine(GetUpdgradeTimer());
+            StartCoroutine(GetUpdgradeTimer(upImage));
         }
     }
 
 
-    IEnumerator GetUpdgradeTimer()
+    IEnumerator GetUpdgradeTimer(Image image)
     {
 
         yield return new WaitForSeconds(1.5f);
+
+        image.fillAmount = 0;
+
+        var temp = image.color;
+        temp.a = 0.5f;
+        image.color = temp;
 
         Initlevel();
 
