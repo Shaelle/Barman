@@ -13,7 +13,7 @@ Shader "Hidden/Roystan/Outline Post Process"
             #pragma vertex Vert
             #pragma fragment Frag
 
-			#include "Packages/com.unity.postprocessing/PostProcessing/Shaders/StdLib.hlsl"
+			#include "StdLib.hlsl"
 
 			TEXTURE2D_SAMPLER2D(_MainTex, sampler_MainTex);
 			// _CameraNormalsTexture contains the view space normals transformed
