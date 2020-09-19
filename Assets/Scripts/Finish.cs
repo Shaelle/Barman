@@ -19,7 +19,7 @@ public class Finish : MonoBehaviour
 
             levelManager.DestinationReached(drink);
 
-            Debug.Log("drink: " + drink.name);
+            //Debug.Log("drink: " + drink.name);
         }
         else
         {

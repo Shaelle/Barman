@@ -93,6 +93,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] float sensitivity = 10;
 
     [SerializeField] Tracer[] tracers;
+    [SerializeField] bool useTracers = false;
 
 
     int goodCount = 0;
@@ -107,6 +108,9 @@ public class LevelManager : MonoBehaviour
     Drink touchedDrink;
     Vector2 touchedStart;
 
+    Vector3 start;
+    Vector3 target;
+
     bool isGetUpdgrade = false;
 
     bool levelActive = false;
@@ -117,6 +121,9 @@ public class LevelManager : MonoBehaviour
 
 
     int drinksForNextLevel = 5;
+
+
+    
 
 
 
@@ -133,6 +140,7 @@ public class LevelManager : MonoBehaviour
 
         Initlevel();
 
+ 
     }
 
 
@@ -362,9 +370,12 @@ public class LevelManager : MonoBehaviour
             if (!isPushing && cursorPos.y > touchedStart.y)
             {
 
-                float delta = cursorPos.x - touchedStart.x;
-                float distance = cursorPos.y - touchedStart.y;
-                float acceleration = (delta / distance) / sensitivity;
+                float acceleration = CalcAcceleration();
+
+
+                float delta = target.z - start.z;
+                float distance = Mathf.Abs(target.x - start.x);
+                Debug.Log("start: " + start + " target: " + target + "delta = " + delta + " distance = " + distance + " acceleration = " + acceleration);
 
                 Time.timeScale = 1;
 
@@ -414,10 +425,10 @@ public class LevelManager : MonoBehaviour
 
                 TracerReset(tracers[i]);
 
-                float delta = cursorPos.x - touchedStart.x;
-                float distance = cursorPos.y - touchedStart.y;
-                float acceleration = (delta / distance) / sensitivity;
+                float acceleration = CalcAcceleration();
+
                 tracers[i].SetDirection(drinkSpeed, acceleration);
+
 
                 yield return new WaitForSeconds(0.4f);
 
@@ -425,6 +436,20 @@ public class LevelManager : MonoBehaviour
 
             }
         }
+    }
+
+
+    float CalcAcceleration()
+    {
+        //float delta = target.z - touchedDrink.gameObject.transform.position.z; // cursorPos.x - touchedStart.x;
+        //float distance = target.y - touchedDrink.gameObject.transform.position.z; // cursorPos.y - touchedStart.y;
+
+        float delta =  target.z - start.z;
+        float distance = Mathf.Abs(target.x - start.x);
+
+        drinkSpeed = 1.5f + distance * 0.7f; //  empirical formula for the speed
+
+        return (delta / distance) / sensitivity;
     }
 
 
@@ -436,12 +461,48 @@ public class LevelManager : MonoBehaviour
 
             Vector2 newPos = value.Get<Vector2>();
 
-            if (touchedDrink == null)
-            {
-
-                RaycastHit hit;
+            //if (touchedDrink == null)
+            //{
 
                 Ray ray = Camera.main.ScreenPointToRay(newPos);
+
+                RaycastHit[] hits;
+                hits = Physics.RaycastAll(ray);
+
+                for (int i = 0; i < hits.Length; i++)
+                {
+                    RaycastHit hit = hits[i];
+
+                    GameObject hitObject = hit.transform.gameObject;
+
+                    if (touchedDrink == null)
+                    {
+                        Drink drink = hitObject.GetComponent<Drink>();
+
+                        if (drink != null)
+                        {
+                            touchedDrink = drink;
+                            touchedStart = newPos;
+
+                            start = hit.point;
+
+                            if (useTracers) StartCoroutine(SendTracer());
+                        }
+                    }
+
+                    if (hitObject.tag == "Targeting")
+                    {
+
+                        //tempPointer.transform.position = hit.point;
+                        target = hit.point;
+
+                        //Debug.Log("hit targeting: " + hit.point);
+                    }
+
+
+                }
+
+                /*
                 if (Physics.Raycast(ray, out hit))
                 {
                     GameObject hitObject = hit.transform.gameObject;
@@ -457,8 +518,9 @@ public class LevelManager : MonoBehaviour
                     }
 
                 }
+                */
 
-            }
+            //}
 
             cursorPos = newPos;
         }
@@ -661,7 +723,7 @@ public class LevelManager : MonoBehaviour
 
     public void CheckHit(Drink drink)
     {
-        Debug.Log("Check hit " + drink.name);
+        //Debug.Log("Check hit " + drink.name);
 
         if (drink.correctOne)
         {
