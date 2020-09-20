@@ -24,7 +24,6 @@ public class Shop : MonoBehaviour
 
     void UpdateCoinsText()
     {
-
         coinsText.text = LevelManager.money.ToString();
     }
 

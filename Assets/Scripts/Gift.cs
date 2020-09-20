@@ -2,26 +2,130 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Gift : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+
+    static float fillPercent = 0;
+
+    const string fillSaveName = "GiftFillPercent";
+
+    const int nextScene = 3;
+    const float pause = 0.5f;
+
+    [SerializeField] GameObject getGift;
+
+    [SerializeField] AudioSource sound;
+
+    Image image;
+
+    bool added;
+
+
+    private void Awake()
     {
-        StartCoroutine(LoadStars());
+        image = getGift.GetComponent<Image>();
+
+        if (image == null) Debug.LogError("Gift's image not found");
+
+        PlayerPrefs.GetFloat(fillSaveName, 0);
+        image.fillAmount = fillPercent;
+
+
+        if (image.fillAmount < 1)
+        {
+            var temp = image.color;
+            temp.a = 0.5f;
+            image.color = temp;
+        }
+
+
+        added = false;
+
+        sound.Stop();
+
     }
 
-    // Update is called once per frame
-    void Update()
+
+
+    public void AddGift()
     {
-        
+      if (!added) StartCoroutine(AddingGift());
+    }
+
+    IEnumerator AddingGift()
+    {
+
+        added = true;
+
+        // Extra conditions here
+
+        sound.Play();
+
+        if (fillPercent < 1)
+        {
+            for (int i = 0; i <= 20; i++)
+            {
+                fillPercent = Mathf.Clamp(image.fillAmount + 0.01f, 0, 1);
+                image.fillAmount = fillPercent;
+
+                yield return new WaitForSeconds(0.1f);
+
+                if (image.fillAmount == 1)
+                {
+                    var temp = image.color;
+                    temp.a = 1f;
+                    image.color = temp;
+
+                    break;
+                }
+            }
+        }
+
+        sound.Stop();
+
+        PlayerPrefs.SetFloat(fillSaveName, fillPercent);
+
+        yield return new WaitForSeconds(pause);
+
+        if (fillPercent < 1) SceneManager.LoadScene(nextScene);
+
     }
 
 
-    IEnumerator LoadStars()
-    {
-        yield return new WaitForSeconds(2);
 
-        SceneManager.LoadScene(3);
+    public void GetGift()
+    {
+        if (fillPercent == 1) StartCoroutine(GettingGift());
     }
+
+    IEnumerator GettingGift()
+    {
+        fillPercent = 0;
+
+        // Getting gift here
+
+        image.fillAmount = 0;
+        PlayerPrefs.SetFloat(fillSaveName, fillPercent);
+
+        var temp = image.color;
+        temp.a = 0.5f;
+        image.color = temp;
+
+        yield return new WaitForSeconds(pause);
+
+     
+        SceneManager.LoadScene(nextScene);
+    }
+
+
+    public void Skip()
+    {
+        SceneManager.LoadScene(nextScene);
+    }
+
+
+
+
 }

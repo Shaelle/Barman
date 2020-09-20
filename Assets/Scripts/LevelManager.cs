@@ -18,7 +18,7 @@ public class LevelManager : MonoBehaviour
     //public static int upgradeParts = 0;
 
 
-    const string moneySaveName = "Money";
+    public const string moneySaveName = "Money";
     const string levelSaveName = "Level";
     const string upgradeSaveName = "Upgrades";
     const string upgradeProgressSaveName = "UpdgradeProgress";
@@ -86,6 +86,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] AudioSource thanks;
     [SerializeField] AudioSource dissapointed;
     [SerializeField] AudioSource excited;
+
+    [SerializeField] HandsSounds handSounds;
 
     [Header("Coins")]
 
@@ -275,11 +277,11 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
      
-        finishedLabel.SetActive(true);
+        //finishedLabel.SetActive(true);
 
         //isGetUpdgrade = true;
 
-
+        /*
         updgradesText.gameObject.SetActive(true);
 
         getUpdgradeButton.SetActive(true);
@@ -313,6 +315,9 @@ public class LevelManager : MonoBehaviour
         PlayerPrefs.SetFloat(upgradeProgressSaveName, upgradeProgress);
 
         isGetUpdgrade = (upImage.fillAmount == 1) ? true : false;
+        */
+
+        isGetUpdgrade = false;
 
         
         //updgradesPartsText.gameObject.SetActive(true);
@@ -690,6 +695,8 @@ public class LevelManager : MonoBehaviour
 
             SetRight2(false);
             SetLeft2(false);
+
+            handSounds.transform.position = rightHand.transform.position;
         }
         else if (rand < 50) // 25 - 50 far left
         {
@@ -698,6 +705,8 @@ public class LevelManager : MonoBehaviour
 
             SetRight2(false);
             SetLeft2(false);
+
+            handSounds.transform.position = leftHand.transform.position;
         }
         else if (rand < 75) // 50 - 75 close right
         {
@@ -706,6 +715,8 @@ public class LevelManager : MonoBehaviour
 
             SetRight2(true);
             SetLeft2(false);
+
+            handSounds.transform.position = rightHand2.transform.position;
         }
         else // rest - close left
         {
@@ -714,10 +725,15 @@ public class LevelManager : MonoBehaviour
 
             SetRight2(false);
             SetLeft2(true);
+
+            handSounds.transform.position = leftHand2.transform.position;
         }
 
 
         ShowTarget();
+
+        handSounds.Play();
+
         StartCoroutine(ResetPushing());
 
     }
