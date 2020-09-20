@@ -74,10 +74,11 @@ public class LevelManager : MonoBehaviour
 
     [Header("Particles")]
 
+
     [SerializeField] ParticleSystem winParticles;
     [SerializeField] ParticleSystem wrongParticles;
-    [SerializeField] ParticleSystem smileParticles;
-    [SerializeField] ParticleSystem angryParticles;
+    [SerializeField] ParticlesPlayer smileParticles;
+    [SerializeField] ParticlesPlayer angryParticles;
 
     [Header("Audio")]
 
@@ -324,7 +325,7 @@ public class LevelManager : MonoBehaviour
 
         winParticles.Stop();
 
-        if (!isGetUpdgrade) Initlevel();
+        if (!isGetUpdgrade) SceneManager.LoadScene(2); // Initlevel();
 
     }
 
@@ -411,7 +412,6 @@ public class LevelManager : MonoBehaviour
 
                 float delta = target.z - start.z;
                 float distance = Mathf.Abs(target.x - start.x);
-                Debug.Log("start: " + start + " target: " + target + "delta = " + delta + " distance = " + distance + " acceleration = " + acceleration);
 
                 Time.timeScale = 1;
 
@@ -869,7 +869,9 @@ public class LevelManager : MonoBehaviour
         temp.a = 0.5f;
         image.color = temp;
 
-        Initlevel();
+        SceneManager.LoadScene(2);
+
+        //Initlevel();
 
     }
 
