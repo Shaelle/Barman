@@ -20,7 +20,7 @@ public class Gift : MonoBehaviour
 
     Image image;
 
-    bool added;
+    bool adding;
 
 
     private void Awake()
@@ -41,23 +41,20 @@ public class Gift : MonoBehaviour
         }
 
 
-        added = false;
+        adding = false;
 
         sound.Stop();
 
+        StartCoroutine(AddingGift());
+
     }
 
 
-
-    public void AddGift()
-    {
-      if (!added) StartCoroutine(AddingGift());
-    }
 
     IEnumerator AddingGift()
     {
 
-        added = true;
+        adding = true;
 
         // Extra conditions here
 
@@ -87,9 +84,11 @@ public class Gift : MonoBehaviour
 
         PlayerPrefs.SetFloat(fillSaveName, fillPercent);
 
-        yield return new WaitForSeconds(pause);
+        adding = false;
 
-        if (fillPercent < 1) SceneManager.LoadScene(nextScene);
+        //yield return new WaitForSeconds(pause);
+
+        //if (fillPercent < 1) SceneManager.LoadScene(nextScene);
 
     }
 
@@ -102,6 +101,8 @@ public class Gift : MonoBehaviour
 
     IEnumerator GettingGift()
     {
+        adding = true;
+
         fillPercent = 0;
 
         // Getting gift here
@@ -115,6 +116,7 @@ public class Gift : MonoBehaviour
 
         yield return new WaitForSeconds(pause);
 
+        adding = false;
      
         SceneManager.LoadScene(nextScene);
     }
@@ -122,7 +124,7 @@ public class Gift : MonoBehaviour
 
     public void Skip()
     {
-        SceneManager.LoadScene(nextScene);
+       if (!adding) SceneManager.LoadScene(nextScene);
     }
 
 

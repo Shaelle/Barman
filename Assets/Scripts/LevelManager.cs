@@ -128,6 +128,8 @@ public class LevelManager : MonoBehaviour
 
     bool levelActive = false;
 
+    bool training = false;
+
 
     int targetNom;
    
@@ -160,6 +162,9 @@ public class LevelManager : MonoBehaviour
 
 
         upImage.fillAmount = upgradeProgress;
+
+
+        training = (level == 1) ? true : false;
 
     }
 
@@ -326,7 +331,7 @@ public class LevelManager : MonoBehaviour
         updgradesText.text = updgrades.ToString();
         //updgradesPartsText.text = upgradeParts.ToString() + " / " + fullUpgradeParts;
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(3f);
 
         winParticles.Stop();
 
@@ -478,6 +483,9 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
+
+
+
 
 
     float CalcAcceleration()
@@ -821,11 +829,13 @@ public class LevelManager : MonoBehaviour
 
         if (drink.correctOne)
         {
-            if (Random.Range(0, 100) <= thanksChance)
+            int n = Random.Range(0, 100);
+
+            if (n <= thanksChance)
             {
                 thanks.Play();
             }
-            else
+            else if (n <= thanksChance + 30)
             {
                 excited.Play();
             }

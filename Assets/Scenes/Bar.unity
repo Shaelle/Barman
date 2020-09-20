@@ -6247,6 +6247,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 60
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &389878429 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3366018125857375637, guid: 5ea9f04364b59594e8371fb820a505b1,
+    type: 3}
+  m_PrefabInstance: {fileID: 3454372968457133833}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &389878430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389878429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 832929208dfdff64183a7a9caeed1c6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  sideSpeed: 0
+  lastStart: {x: 0, y: 0, z: 0}
 --- !u!1 &426610030
 GameObject:
   m_ObjectHideFlags: 0
@@ -6907,6 +6928,11 @@ PrefabInstance:
     - target: {fileID: 4513101753141682006, guid: 418e3d5827c4edc4aa18fd44364475c7,
         type: 3}
       propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4513101753141682006, guid: 418e3d5827c4edc4aa18fd44364475c7,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4513101753141682007, guid: 418e3d5827c4edc4aa18fd44364475c7,
@@ -52513,9 +52539,9 @@ ParticleSystem:
         m_RotationOrder: 4
     startSpeed:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 10
-      minScalar: 5
+      minMaxState: 0
+      scalar: 0
+      minScalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -52630,7 +52656,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.4
+      scalar: 0.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -52952,7 +52978,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -53005,7 +53031,7 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 1
-    type: 4
+    type: 5
     angle: 40
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
@@ -53211,7 +53237,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 10
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -53314,66 +53340,8 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    m_BurstCount: 1
-    m_Bursts:
-    - serializedVersion: 2
-      time: 0
-      countCurve:
-        serializedVersion: 2
-        minMaxState: 0
-        scalar: 30
-        minScalar: 30
-        maxCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 1
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-        minCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 1
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 1
-            value: 1
-            inSlope: 0
-            outSlope: 0
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-      cycleCount: 0
-      repeatInterval: 0.05
-      probability: 1
+    m_BurstCount: 0
+    m_Bursts: []
   SizeModule:
     enabled: 1
     curve:
@@ -55035,11 +55003,11 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
   NoiseModule:
-    enabled: 0
+    enabled: 1
     strength:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -56290,7 +56258,7 @@ ParticleSystem:
         m_RotationOrder: 4
     maxLights: 20
   TrailModule:
-    enabled: 1
+    enabled: 0
     mode: 0
     ratio: 1
     lifetime:
@@ -57174,13 +57142,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1192211649}
-  m_LocalRotation: {x: -0.68518597, y: -0, z: -0, w: 0.72836816}
-  m_LocalPosition: {x: -0.098, y: 0.683, z: 4.704}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 2.706, y: 1.873, z: 4.741}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 43
-  m_LocalEulerAnglesHint: {x: -86.50001, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1219400136
 GameObject:
   m_ObjectHideFlags: 0
@@ -83225,6 +83193,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2933052462044646701, guid: 4e43b6cc9f09a624696f6a400387e1ca,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3398398247192341677, guid: 4e43b6cc9f09a624696f6a400387e1ca,
         type: 3}
       propertyPath: m_Layer
@@ -91661,6 +91634,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Drink Manhattan
+      objectReference: {fileID: 0}
+    - target: {fileID: 3430678093754066528, guid: 527c7e1e3be398c41bfb1e358f4c25a8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3430678093754066529, guid: 527c7e1e3be398c41bfb1e358f4c25a8,
         type: 3}
