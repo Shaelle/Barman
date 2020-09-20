@@ -169,7 +169,7 @@ public class LevelManager : MonoBehaviour
 
         if (nextLevelLabel == null) Debug.LogError("No text component for level label");
 
-        nextLevelLabel.text = "Day " + level.ToString();
+        nextLevelLabel.text = "DAY " + level.ToString();
         nextlevelButton.SetActive(true);
 
         ResetLevel();
@@ -672,7 +672,7 @@ public class LevelManager : MonoBehaviour
             //badCount++;
             brokenCount++;
 
-            wrongParticles.Play();
+            //wrongParticles.Play();
             angryParticles.Play();
 
             UpdateScore();
