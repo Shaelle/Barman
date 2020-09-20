@@ -12,8 +12,16 @@ public class LevelManager : MonoBehaviour
 
     public static int level = 1;
 
+
     public static int updgrades = 0;
-    public static int upgradeParts = 0;
+    public static float upgradeProgress = 0;
+    //public static int upgradeParts = 0;
+
+
+    const string moneySaveName = "Money";
+    const string levelSaveName = "Level";
+    const string upgradeSaveName = "Upgrades";
+    const string upgradeProgressSaveName = "UpdgradeProgress";
 
     const int fullUpgradeParts = 5;
 
@@ -75,6 +83,8 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] AudioSource startMelody;
     [SerializeField] AudioSource thanks;
+    [SerializeField] AudioSource dissapointed;
+    [SerializeField] AudioSource excited;
 
     [Header("Coins")]
 
@@ -114,6 +124,9 @@ public class LevelManager : MonoBehaviour
     bool isGetUpdgrade = false;
 
     bool levelActive = false;
+
+
+    int targetNom;
    
 
     [SerializeField] int minDrinksForNextLevel = 4;
@@ -130,7 +143,24 @@ public class LevelManager : MonoBehaviour
     private void Awake()
     {
         nextLevelLabel = nextlevelButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
+        PlayerPrefs.GetInt(moneySaveName, 0);
+        PlayerPrefs.GetInt(levelSaveName, 0);
+
+        PlayerPrefs.GetInt(upgradeSaveName, 0);
+        PlayerPrefs.GetFloat(upgradeProgressSaveName, 0);
+
+
+        Image upImage = getUpdgradeButton.GetComponent<Image>();
+
+        if (upImage == null) Debug.LogError("Upgrade button's image not found.");
+
+
+        upImage.fillAmount = upgradeProgress;
+
     }
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -166,6 +196,8 @@ public class LevelManager : MonoBehaviour
         caseButton.SetActive(true);
         finishedLabel.SetActive(false);
 
+
+  
 
         if (nextLevelLabel == null) Debug.LogError("No text component for level label");
 
@@ -274,6 +306,10 @@ public class LevelManager : MonoBehaviour
                 break;
             }
         }
+
+
+        upgradeProgress = upImage.fillAmount;
+        PlayerPrefs.SetFloat(upgradeProgressSaveName, upgradeProgress);
 
         isGetUpdgrade = (upImage.fillAmount == 1) ? true : false;
 
@@ -551,15 +587,34 @@ public class LevelManager : MonoBehaviour
 
         drinkHint.sprite = drinkIcons[n];
 
-        Drink.Kinds kind = shuffledDrinks[n].kind;
+
+        targetNom = n;
+
+        //Drink.Kinds kind = shuffledDrinks[n].kind;
+
+        HideTargets();
+
+    }
+
+
+    void HideTargets()
+    {
+        foreach (Rotation target in targetMarks)
+        {
+            target.gameObject.SetActive(false);
+        }
+    }
+
+
+    void ShowTarget()
+    {
+
+        Drink.Kinds kind = shuffledDrinks[targetNom].kind;
 
         foreach (Rotation target in targetMarks)
         {
             target.gameObject.SetActive(target.kind == kind);
         }
-
-
-
     }
 
 
@@ -581,70 +636,89 @@ public class LevelManager : MonoBehaviour
 
 
 
-    void SetHandDirection() // Randomly setting directions, from which a hand is coming
+    void SetHandDirection(float timer) // Randomly setting directions, from which a hand is coming
     {
+        StartCoroutine(SettingDirection(timer));
+    }
+
+
+
+    IEnumerator SettingDirection(float timer)
+    {
+
+        void SetRight(bool active) //TODO: simplify (with new prefabs?)
+        {
+            rightHand.SetActive(active);
+            rightTrigger.SetActive(active);
+        }
+
+        void SetLeft(bool active)
+        {
+            leftHand.SetActive(active);
+            leftTrigger.SetActive(active);
+        }
+
+        void SetRight2(bool active)
+        {
+            rightHand2.SetActive(active);
+            rightTrigger2.SetActive(active);
+        }
+
+        void SetLeft2(bool active)
+        {
+            leftHand2.SetActive(active);
+            leftTrigger2.SetActive(active);
+        }
+
+
+        SetRight(false); 
+        SetLeft(false);
+
+        SetRight2(false);
+        SetLeft2(false);
+
+
+        yield return new WaitForSeconds(timer);
+
         int rand = Random.Range(0, 100);
 
 
         if (rand < 25) // 0 - 25 far right
         {
-            rightHand.SetActive(true); //TODO: simplify with new prefabs
-            rightTrigger.SetActive(true);
+            SetRight(true);
+            SetLeft(false);
 
-            leftHand.SetActive(false);          
-            leftTrigger.SetActive(false);
-
-            rightHand2.SetActive(false);
-            rightTrigger2.SetActive(false);
-
-            leftHand2.SetActive(false);
-            leftTrigger2.SetActive(false);
-
+            SetRight2(false);
+            SetLeft2(false);
         }
         else if (rand < 50) // 25 - 50 far left
         {
+            SetLeft(true);
+            SetRight(false);
 
-            leftHand.SetActive(true);
-            leftTrigger.SetActive(true);
-
-            rightHand.SetActive(false);           
-            rightTrigger.SetActive(false);
-
-            rightHand2.SetActive(false);
-            rightTrigger2.SetActive(false);
-
-            leftHand2.SetActive(false);
-            leftTrigger2.SetActive(false);
+            SetRight2(false);
+            SetLeft2(false);
         }
         else if (rand < 75) // 50 - 75 close right
         {
+            SetLeft(false);
+            SetRight(false);
 
-            leftHand.SetActive(false);
-            leftTrigger.SetActive(false);
-
-            rightHand.SetActive(false);
-            rightTrigger.SetActive(false);
-
-            rightHand2.SetActive(true);
-            rightTrigger2.SetActive(true);
-
-            leftHand2.SetActive(false);
-            leftTrigger2.SetActive(false);
+            SetRight2(true);
+            SetLeft2(false);
         }
         else // rest - close left
         {
-            leftHand.SetActive(false);
-            leftTrigger.SetActive(false);
+            SetLeft(false);
+            SetRight(false);
 
-            rightHand.SetActive(false);
-            rightTrigger.SetActive(false);
-
-            rightHand2.SetActive(false);
-            rightTrigger2.SetActive(false);
-
-            leftHand2.SetActive(true);
-            leftTrigger2.SetActive(true);
+            SetRight2(false);
+            SetLeft2(true);
         }
+
+
+        ShowTarget();
+        StartCoroutine(ResetPushing());
 
     }
 
@@ -652,13 +726,13 @@ public class LevelManager : MonoBehaviour
     public void DestinationReached(Drink drink) // Reached stop ("hand") trigger
     {
 
-        StartCoroutine(ResetPushing());
+        //StartCoroutine(ResetPushing());
         //isPushing = false;
 
         CheckHit(drink);
         UpdateScore();
 
-        UpdateTable();
+        UpdateTable(Random.Range(0,1));
 
     }
 
@@ -667,7 +741,7 @@ public class LevelManager : MonoBehaviour
     {
         if (isPushing) // prevent false alarms when drinks is reordering.
         {
-            StartCoroutine(ResetPushing());
+            //StartCoroutine(ResetPushing());
             //isPushing = false;
             //badCount++;
             brokenCount++;
@@ -677,19 +751,22 @@ public class LevelManager : MonoBehaviour
 
             UpdateScore();
 
-            UpdateTable();
+            UpdateTable(Random.Range(0,1));
         }
     }
 
 
-    public void UpdateTable()
+    public void UpdateTable(float timer = 0)
     {
         if (levelActive)
         {
-            SetHandDirection();
+            
             PlaceDrinks();
+            SetHandDirection(timer);
         }
     }
+
+
 
 
     void UpdateScore()
@@ -704,6 +781,7 @@ public class LevelManager : MonoBehaviour
 
 
             level++;
+            PlayerPrefs.SetInt(levelSaveName, level);
             FinishLevel();
 
             //ShuffleDrinks(drinks); // New level - shuffling drinks.
@@ -727,10 +805,18 @@ public class LevelManager : MonoBehaviour
 
         if (drink.correctOne)
         {
-            if (Random.Range(0, 100) <= thanksChance) thanks.Play(); 
+            if (Random.Range(0, 100) <= thanksChance)
+            {
+                thanks.Play();
+            }
+            else
+            {
+                excited.Play();
+            }
 
             goodCount++;
             money += Random.Range(minCoins, maxCoins);
+            PlayerPrefs.SetInt(moneySaveName, money);
 
             smileParticles.Play();
             wrongParticles.Stop();
@@ -738,7 +824,8 @@ public class LevelManager : MonoBehaviour
         else
         {
             angryParticles.Play();
-            wrongParticles.Play();
+            dissapointed.Play();
+            //wrongParticles.Play();
 
 
             badCount++;
@@ -760,6 +847,7 @@ public class LevelManager : MonoBehaviour
             if (upImage.fillAmount != 1) return;
           
             updgrades++;
+            PlayerPrefs.SetInt(upgradeSaveName, updgrades);
 
             updgradesText.text = updgrades.ToString();
 
@@ -774,6 +862,8 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         image.fillAmount = 0;
+        upgradeProgress = image.fillAmount;
+        PlayerPrefs.SetFloat(upgradeProgressSaveName, upgradeProgress);
 
         var temp = image.color;
         temp.a = 0.5f;
