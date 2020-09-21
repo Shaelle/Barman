@@ -271,7 +271,7 @@ public class LevelManager : MonoBehaviour
 
         levelCompleted.Play();
 
-        winParticles.Play();
+        //winParticles.Play();
         winParticles2.Play();
 
         // some animations here

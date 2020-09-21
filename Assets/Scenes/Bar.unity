@@ -67333,8 +67333,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1338438635}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.132, y: 0, z: 5.524}
-  m_LocalScale: {x: 0.2943, y: 1, z: 1}
+  m_LocalPosition: {x: -1.15, y: 0, z: 5.524}
+  m_LocalScale: {x: 0.42226163, y: 1, z: 1}
   m_Children:
   - {fileID: 1555577967}
   - {fileID: 1148851955}
@@ -72562,6 +72562,7 @@ MonoBehaviour:
   wrongParticles: {fileID: 1067716845}
   smileParticles: {fileID: 966428568}
   angryParticles: {fileID: 196009208}
+  smilesChance: 45
   startMelody: {fileID: 1124844935}
   thanks: {fileID: 1452111048}
   dissapointed: {fileID: 1104388784}
@@ -95191,7 +95192,7 @@ Transform:
   m_GameObject: {fileID: 2002290869}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.192, y: 0, z: 3.984}
-  m_LocalScale: {x: 0.31666, y: 1, z: 1}
+  m_LocalScale: {x: 0.4566237, y: 1, z: 1}
   m_Children:
   - {fileID: 1741069585}
   - {fileID: 780880055}
