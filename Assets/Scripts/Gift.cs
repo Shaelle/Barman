@@ -36,7 +36,7 @@ public class Gift : MonoBehaviour
         if (image.fillAmount < 1)
         {
             var temp = image.color;
-            temp.a = 0.5f;
+            //temp.a = 0.9f;
             image.color = temp;
         }
 
@@ -118,16 +118,21 @@ public class Gift : MonoBehaviour
 
         adding = false;
      
-        SceneManager.LoadScene(nextScene);
+        StartCoroutine(LoadingScene(nextScene));
     }
 
 
     public void Skip()
     {
-       if (!adding) SceneManager.LoadScene(nextScene);
+       if (!adding) StartCoroutine(LoadingScene(nextScene));
     }
 
 
+    IEnumerator LoadingScene(int sceneIndex) // Small pause before loading next scene, so click sound on the button can play
+    {
+        yield return new WaitForSeconds(0.3f);
+        SceneManager.LoadScene(sceneIndex);
+    }
 
 
 }

@@ -70,6 +70,8 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] GameObject finishedLabel;
 
+    [SerializeField] GameObject uiBackground;
+
     [Header("Particles")]
 
 
@@ -79,12 +81,15 @@ public class LevelManager : MonoBehaviour
     [SerializeField] ParticlesPlayer smileParticles;
     [SerializeField] ParticlesPlayer angryParticles;
 
+    [SerializeField] [Range(1, 100)] int smilesChance = 45;
+
     [Header("Audio")]
 
     [SerializeField] AudioSource startMelody;
     [SerializeField] AudioSource thanks;
     [SerializeField] AudioSource dissapointed;
     [SerializeField] AudioSource excited;
+    [SerializeField] AudioSource levelCompleted;
 
     [SerializeField] HandsSounds handSounds;
 
@@ -107,6 +112,10 @@ public class LevelManager : MonoBehaviour
     [SerializeField] bool useTracers = false;
 
     [SerializeField] Tracer pointingHand;
+
+
+    [SerializeField] float minHandDelay = 0;
+    [SerializeField] float maxHandDelay = 1;
 
 
     int goodCount = 0;
@@ -153,7 +162,7 @@ public class LevelManager : MonoBehaviour
         nextLevelLabel = nextlevelButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
 
         money =  PlayerPrefs.GetInt(moneySaveName, 0);
-        level = PlayerPrefs.GetInt(levelSaveName, 0);
+        level = PlayerPrefs.GetInt(levelSaveName, 1);
 
         updgrades = PlayerPrefs.GetInt(upgradeSaveName, 0);
         upgradeProgress = PlayerPrefs.GetFloat(upgradeProgressSaveName, 0);
@@ -200,6 +209,8 @@ public class LevelManager : MonoBehaviour
         nextLevelLabel.text = "DAY " + level.ToString();
         nextlevelButton.SetActive(true);
 
+        uiBackground.SetActive(true);
+
         //settingsButton.SetActive(true);
 
         giftButton.SetActive(true);
@@ -225,6 +236,8 @@ public class LevelManager : MonoBehaviour
         nextlevelButton.SetActive(false);
         //settingsButton.SetActive(false);
         giftButton.SetActive(false);
+
+        uiBackground.SetActive(false);
 
         isPushing = false;
 
@@ -255,6 +268,8 @@ public class LevelManager : MonoBehaviour
     {
 
         ResetLevel();
+
+        levelCompleted.Play();
 
         winParticles.Play();
         winParticles2.Play();
@@ -345,7 +360,13 @@ public class LevelManager : MonoBehaviour
 
     public void GoToShop() // Opening the shop ("meta") screen
     {
-        SceneManager.LoadScene(1);
+        StartCoroutine(LoadingScene(1));
+    }
+
+    IEnumerator LoadingScene(int sceneIndex) // Small pause before loading next scene, so click sound on the button can play
+    {
+        yield return new WaitForSeconds(0.3f);
+        SceneManager.LoadScene(sceneIndex);
     }
 
 
@@ -728,7 +749,7 @@ public class LevelManager : MonoBehaviour
         CheckHit(drink);
         UpdateScore();
 
-        UpdateTable(Random.Range(0,1));
+        UpdateTable(Random.Range(minHandDelay,maxHandDelay));
     }
 
 
@@ -740,11 +761,11 @@ public class LevelManager : MonoBehaviour
 
             if (level == 1 && goodCount == 0) needTraining = true;
 
-            angryParticles.Play();
+            if (Random.Range(0,100) <= smilesChance) angryParticles.Play();
 
             UpdateScore();
 
-            UpdateTable(Random.Range(0,1));
+            UpdateTable(Random.Range(minHandDelay,maxHandDelay));
         }
     }
 
@@ -800,12 +821,14 @@ public class LevelManager : MonoBehaviour
             money += Random.Range(minCoins, maxCoins);
             PlayerPrefs.SetInt(moneySaveName, money);
 
-            smileParticles.Play();
+            if (Random.Range(0,100) <= smilesChance) smileParticles.Play();
+
             wrongParticles.Stop();
         }
         else
         {
-            angryParticles.Play();
+            if (Random.Range(0,100) <= smilesChance) angryParticles.Play();
+
             dissapointed.Play();
 
             badCount++;

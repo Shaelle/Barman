@@ -29,6 +29,13 @@ public class Shop : MonoBehaviour
 
     public void ReturnToBar()
     {
-        SceneManager.LoadScene(0);
+        StartCoroutine(LoadingScene(0));
+    }
+
+
+    IEnumerator LoadingScene(int sceneIndex) // Small pause before loading next scene, so click sound on the button can play
+    {
+        yield return new WaitForSeconds(0.3f);
+        SceneManager.LoadScene(sceneIndex);
     }
 }

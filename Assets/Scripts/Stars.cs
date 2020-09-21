@@ -8,6 +8,7 @@ public class Stars : MonoBehaviour
 {
 
     [SerializeField] TextMeshProUGUI coinsText;
+    [SerializeField] GameObject noThanks;
 
     bool claimed = false;
 
@@ -15,12 +16,26 @@ public class Stars : MonoBehaviour
     void Start()
     {
         UpdateCoinsText();
+        noThanks.SetActive(false);
+        StartCoroutine(ShowNoThanks());
+    }
+
+    IEnumerator ShowNoThanks()
+    {
+        yield return new WaitForSeconds(1.5f);
+        noThanks.SetActive(true);
     }
 
 
     public void ClaimBonus()
     {
         if (!claimed) StartCoroutine(ClaimingBonus());
+    }
+
+
+    public void NoThanks()
+    {
+        StartCoroutine(LoadingScene(0));
     }
 
 
@@ -39,7 +54,7 @@ public class Stars : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        SceneManager.LoadScene(0);
+        StartCoroutine(LoadingScene(0));
            
     }
 
@@ -51,6 +66,14 @@ public class Stars : MonoBehaviour
     void UpdateCoinsText()
     {
         coinsText.text = LevelManager.money.ToString();
+    }
+
+
+
+    IEnumerator LoadingScene(int sceneIndex) // Small pause before loading next scene, so click sound on the button can play
+    {
+        yield return new WaitForSeconds(0.3f);
+        SceneManager.LoadScene(sceneIndex);
     }
 
 
