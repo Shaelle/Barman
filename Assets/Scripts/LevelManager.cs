@@ -47,7 +47,6 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject[] drinkSlots;
 
     [SerializeField] Drink[] drinks;
-    [SerializeField] Sprite[] drinkIcons;
 
     Drink[] shuffledDrinks;
 
@@ -56,14 +55,12 @@ public class LevelManager : MonoBehaviour
 
     [Header("UI")]
 
-    [SerializeField] TextMeshProUGUI progressText;
     [SerializeField] TextMeshProUGUI moneyText;
 
     [SerializeField] TextMeshProUGUI updgradesText;
-    [SerializeField] TextMeshProUGUI updgradesPartsText;
     [SerializeField] GameObject getUpdgradeButton;
+    [SerializeField] GameObject settingsButton;
 
-    [SerializeField] Image drinkHint;
 
     [SerializeField] GameObject caseButton;
 
@@ -97,8 +94,6 @@ public class LevelManager : MonoBehaviour
     [SerializeField] int minLevelBonus = 60;
     [SerializeField] int maxLevelBonus = 150;
 
-    [SerializeField] int bonusThreshold = 3;
-
     [Header("Other")]
 
     [SerializeField] [Range(1, 100)] int thanksChance = 40;
@@ -107,6 +102,8 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] Tracer[] tracers;
     [SerializeField] bool useTracers = false;
+
+    [SerializeField] Tracer pointingHand;
 
 
     int goodCount = 0;
@@ -124,11 +121,14 @@ public class LevelManager : MonoBehaviour
     Vector3 start;
     Vector3 target;
 
+    Vector3 activeHand;
+
     bool isGetUpdgrade = false;
 
     bool levelActive = false;
 
     bool training = false;
+    bool needTraining = false;
 
 
     int targetNom;
@@ -141,10 +141,10 @@ public class LevelManager : MonoBehaviour
     int drinksForNextLevel = 5;
 
 
-    
+    Coroutine coTracers;
 
 
-
+  
     private void Awake()
     {
         nextLevelLabel = nextlevelButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
@@ -164,38 +164,26 @@ public class LevelManager : MonoBehaviour
         upImage.fillAmount = upgradeProgress;
 
 
-        training = (level == 1) ? true : false;
-
     }
-
 
 
     // Start is called before the first frame update
     void Start()
     {
-
         if (drinkSlots.Length > drinks.Length) Debug.LogWarning("Number of drinks should be equal or bigger than the number of slots! Slots: " + drinkSlots.Length+", drinks: " +drinks.Length);
 
         Initlevel();
 
- 
+        needTraining = (level == 1) ? true : false;
     }
 
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
-    public void Initlevel()
+    public void Initlevel() // Initializing level with default values
     {
 
         levelActive = false;
 
         startMelody.gameObject.SetActive(true);
-
 
         goodCount = 0;
         badCount = 0;
@@ -204,38 +192,33 @@ public class LevelManager : MonoBehaviour
         caseButton.SetActive(true);
         finishedLabel.SetActive(false);
 
-
-  
-
         if (nextLevelLabel == null) Debug.LogError("No text component for level label");
 
         nextLevelLabel.text = "DAY " + level.ToString();
         nextlevelButton.SetActive(true);
+
+        settingsButton.SetActive(true);
 
         ResetLevel();
 
         moneyText.text = money.ToString();
 
         drinksForNextLevel = Random.Range(minDrinksForNextLevel, maxDrinksForNextLevel);
-
-
     }
 
 
-    public void StartLevel()
+    public void StartLevel() // Starting the level
     {
 
         levelActive = true;
 
         startMelody.gameObject.SetActive(false);
 
-
-        //drinkHint.gameObject.SetActive(true);
-
         caseButton.SetActive(false);
         finishedLabel.SetActive(false);
 
         nextlevelButton.SetActive(false);
+        settingsButton.SetActive(false);
 
         isPushing = false;
 
@@ -249,19 +232,13 @@ public class LevelManager : MonoBehaviour
        
         UpdateTable();
         UpdateScore();
-       
+
+
     }
 
 
-    public void FinishLevel()
+    public void FinishLevel()  // Finishing the level
     {
-
-        if (badCount + brokenCount <= bonusThreshold)
-        {
-            //money += Random.Range(minLevelBonus, maxLevelBonus);
-            //UpdateScore();
-        }
-
         levelActive = false;
         StartCoroutine(Finishinglevel());
     }
@@ -271,8 +248,6 @@ public class LevelManager : MonoBehaviour
     IEnumerator Finishinglevel()
     {
 
-        //caseButton.SetActive(true);
-
         ResetLevel();
 
         winParticles.Play();
@@ -281,61 +256,17 @@ public class LevelManager : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-     
-        //finishedLabel.SetActive(true);
-
-        //isGetUpdgrade = true;
-
-        /*
-        updgradesText.gameObject.SetActive(true);
-
-        getUpdgradeButton.SetActive(true);
-
-
-        Image upImage = getUpdgradeButton.GetComponent<Image>();
-
-        if (upImage == null) Debug.LogError("Upgrade button's image not found.");
-        
-        int addPerc = Random.Range(20, 40);
-
-        for (int i = 0; i <= addPerc; i++)
-        {
-            float newFill = Mathf.Clamp(upImage.fillAmount + 0.01f, 0, 1);
-            upImage.fillAmount = newFill;
-
-            yield return new WaitForSeconds(0.1f);
-
-            if (upImage.fillAmount == 1)
-            {
-                var temp = upImage.color;
-                temp.a = 1f;            
-                upImage.color = temp;
-
-                break;
-            }
-        }
-
-
-        upgradeProgress = upImage.fillAmount;
-        PlayerPrefs.SetFloat(upgradeProgressSaveName, upgradeProgress);
-
-        isGetUpdgrade = (upImage.fillAmount == 1) ? true : false;
-        */
-
+  
         isGetUpdgrade = false;
 
-        
-        //updgradesPartsText.gameObject.SetActive(true);
-        
-
+              
         updgradesText.text = updgrades.ToString();
-        //updgradesPartsText.text = upgradeParts.ToString() + " / " + fullUpgradeParts;
 
         yield return new WaitForSeconds(3f);
 
         winParticles.Stop();
 
-        if (!isGetUpdgrade) SceneManager.LoadScene(2); // Initlevel();
+        if (!isGetUpdgrade) SceneManager.LoadScene(2);
 
     }
 
@@ -343,15 +274,13 @@ public class LevelManager : MonoBehaviour
 
 
 
-    void ResetLevel()
+    void ResetLevel() // Resetting the level
     {
 
         isPushing = true;
 
         rightHand.SetActive(false);
         rightTrigger.SetActive(false);
-
-        drinkHint.gameObject.SetActive(false);
 
         leftHand.SetActive(false);
         leftTrigger.SetActive(false);
@@ -363,8 +292,10 @@ public class LevelManager : MonoBehaviour
         leftHand2.SetActive(false);
         leftTrigger2.SetActive(false);
 
+
+        activeHand = Vector3.zero;
+
         updgradesText.gameObject.SetActive(false);
-        updgradesPartsText.gameObject.SetActive(false);
         getUpdgradeButton.SetActive(false);
 
         winParticles.Stop();
@@ -393,20 +324,26 @@ public class LevelManager : MonoBehaviour
             TracerReset(tracer);
         }
 
+        pointingHand.GoToStart(Vector3.zero);
+        pointingHand.SetDirection(0, 0);
+
 
     }
 
 
 
-    public void GoToShop()
+    public void GoToShop() // Opening the shop ("meta") screen
     {
         SceneManager.LoadScene(1);
     }
 
 
 
-    void OnPress(InputValue value)
+    void OnPress(InputValue value) // Event that happens when player presses / releases pointer (mouse, finger etc)
     {
+
+        if (training) StopTraining();
+
         isPressed = value.isPressed;
 
         if (!value.isPressed && touchedDrink != null)
@@ -447,23 +384,23 @@ public class LevelManager : MonoBehaviour
 
 
 
-    public void TracerReset(Tracer tracer)
+    public void TracerReset(Tracer tracer) // Retuning tracer to it's starting position
     {
 
 
-        if (touchedDrink != null)
+        if (touchedDrink != null || training)
         {
-            tracer.GoToStart(touchedDrink.transform.position);
-            tracer.lastStart = touchedDrink.transform.position;
+            tracer.GoToStart(start);
+            tracer.lastStart = start;
         }
 
     }
 
 
-    IEnumerator SendTracer()
+    IEnumerator SendTracer() // Sending tracer by drink's predicted trajectory
     {
 
-        while (touchedDrink != null)
+        while (touchedDrink != null || training)
         {
 
             for (int i = 0; i < tracers.Length; i++)
@@ -478,20 +415,69 @@ public class LevelManager : MonoBehaviour
 
                 yield return new WaitForSeconds(0.4f);
 
-                //TracerReset(tracers[i]);
-
             }
+
+            yield return new WaitForSeconds(0.1f);
+
+            if (training)
+            {
+                TracerReset(pointingHand);
+
+                float acceleration = CalcAcceleration();
+
+                pointingHand.SetDirection(drinkSpeed, acceleration);
+            }
+
+            yield return new WaitForSeconds(0.2f);
+
         }
     }
 
 
-
-
-
-    float CalcAcceleration()
+    void ActivateTraining() // Activating training when player starts the game in the first time: sending hand (and tracers) by recommended trajectory
     {
-        //float delta = target.z - touchedDrink.gameObject.transform.position.z; // cursorPos.x - touchedStart.x;
-        //float distance = target.y - touchedDrink.gameObject.transform.position.z; // cursorPos.y - touchedStart.y;
+        needTraining = false;
+
+        TracerReset(pointingHand);
+
+        Debug.Log("activating training");
+        foreach (Drink drink in drinks) // Search for the selected drink and set it as starting point
+        {
+            if (drink.correctOne)
+            {
+                start = drink.transform.position;
+                break;
+            }
+        }
+
+        target = activeHand;
+
+        training = true;
+
+       coTracers = StartCoroutine(SendTracer());
+
+    }
+
+
+    void StopTraining() // Stopping training after player presses the pointer
+    {
+
+        pointingHand.GoToStart(Vector3.zero);
+        pointingHand.SetDirection(0, 0);
+
+        Debug.Log("stoping training");
+        training = false;
+        StopCoroutine(coTracers);
+
+        for (int i = 0; i < tracers.Length; i++)
+        {
+            TracerReset(tracers[i]);
+        }
+    }
+
+
+    float CalcAcceleration() // Calculating speed and side acceleration for the drinks
+    {
 
         float delta =  target.z - start.z;
         float distance = Mathf.Abs(target.x - start.x);
@@ -502,7 +488,7 @@ public class LevelManager : MonoBehaviour
     }
 
 
-    void OnMove(InputValue value) // Drink being pushed
+    void OnMove(InputValue value) // Player moving the pointer
     {
 
         if (isPressed)
@@ -510,52 +496,20 @@ public class LevelManager : MonoBehaviour
 
             Vector2 newPos = value.Get<Vector2>();
 
-            //if (touchedDrink == null)
-            //{
+            Ray ray = Camera.main.ScreenPointToRay(newPos);
 
-                Ray ray = Camera.main.ScreenPointToRay(newPos);
+            RaycastHit[] hits;
+            hits = Physics.RaycastAll(ray);
 
-                RaycastHit[] hits;
-                hits = Physics.RaycastAll(ray);
 
-                for (int i = 0; i < hits.Length; i++)
+            for (int i = 0; i < hits.Length; i++)
+            {
+                RaycastHit hit = hits[i];
+
+                GameObject hitObject = hit.transform.gameObject;
+
+                if (touchedDrink == null)
                 {
-                    RaycastHit hit = hits[i];
-
-                    GameObject hitObject = hit.transform.gameObject;
-
-                    if (touchedDrink == null)
-                    {
-                        Drink drink = hitObject.GetComponent<Drink>();
-
-                        if (drink != null)
-                        {
-                            touchedDrink = drink;
-                            touchedStart = newPos;
-
-                            start = hit.point;
-
-                            if (useTracers) StartCoroutine(SendTracer());
-                        }
-                    }
-
-                    if (hitObject.tag == "Targeting")
-                    {
-
-                        //tempPointer.transform.position = hit.point;
-                        target = hit.point;
-
-                        //Debug.Log("hit targeting: " + hit.point);
-                    }
-
-
-                }
-
-                /*
-                if (Physics.Raycast(ray, out hit))
-                {
-                    GameObject hitObject = hit.transform.gameObject;
-
                     Drink drink = hitObject.GetComponent<Drink>();
 
                     if (drink != null)
@@ -563,13 +517,18 @@ public class LevelManager : MonoBehaviour
                         touchedDrink = drink;
                         touchedStart = newPos;
 
-                        StartCoroutine(SendTracer());
+                        start = hit.point;
+
+                        if (useTracers) StartCoroutine(SendTracer());
                     }
-
                 }
-                */
 
-            //}
+
+                if (hitObject.tag == "Targeting")
+                {
+                    target = hit.point;
+                }
+            }
 
             cursorPos = newPos;
         }
@@ -577,7 +536,7 @@ public class LevelManager : MonoBehaviour
 
 
 
-    void PlaceDrinks()
+    void PlaceDrinks() // Placing drinks on the table. Choosing the selected one.
     {
 
         foreach (Drink drink in drinks)
@@ -598,9 +557,6 @@ public class LevelManager : MonoBehaviour
 
         shuffledDrinks[n].correctOne = true;
 
-        drinkHint.sprite = drinkIcons[n];
-
-
         targetNom = n;
 
         //Drink.Kinds kind = shuffledDrinks[n].kind;
@@ -610,7 +566,7 @@ public class LevelManager : MonoBehaviour
     }
 
 
-    void HideTargets()
+    void HideTargets() // Reset target marks for drinks by hiding them all
     {
         foreach (Rotation target in targetMarks)
         {
@@ -619,7 +575,7 @@ public class LevelManager : MonoBehaviour
     }
 
 
-    void ShowTarget()
+    void ShowTarget() // Showing mark for the selected drink
     {
 
         Drink.Kinds kind = shuffledDrinks[targetNom].kind;
@@ -632,7 +588,7 @@ public class LevelManager : MonoBehaviour
 
 
 
-    private void ShuffleDrinks(Drink[] drinks)
+    private void ShuffleDrinks(Drink[] drinks) // Shuffling drinks like a cards. The first (four) in the list will be go to the table
     {
         Drink[] newArray = drinks.Clone() as Drink[];
 
@@ -656,7 +612,7 @@ public class LevelManager : MonoBehaviour
 
 
 
-    IEnumerator SettingDirection(float timer)
+    IEnumerator SettingDirection(float timer) // Choosing randomely, from which direction "customer's hand" will appear
     {
 
         void SetRight(bool active) //TODO: simplify (with new prefabs?)
@@ -705,6 +661,7 @@ public class LevelManager : MonoBehaviour
             SetLeft2(false);
 
             handSounds.transform.position = rightHand.transform.position;
+            activeHand = rightTrigger.transform.position;
         }
         else if (rand < 50) // 25 - 50 far left
         {
@@ -715,6 +672,7 @@ public class LevelManager : MonoBehaviour
             SetLeft2(false);
 
             handSounds.transform.position = leftHand.transform.position;
+            activeHand = leftTrigger.transform.position;
         }
         else if (rand < 75) // 50 - 75 close right
         {
@@ -725,6 +683,7 @@ public class LevelManager : MonoBehaviour
             SetLeft2(false);
 
             handSounds.transform.position = rightHand2.transform.position;
+            activeHand = rightTrigger2.transform.position;
         }
         else // rest - close left
         {
@@ -735,6 +694,7 @@ public class LevelManager : MonoBehaviour
             SetLeft2(true);
 
             handSounds.transform.position = leftHand2.transform.position;
+            activeHand = leftTrigger2.transform.position;
         }
 
 
@@ -744,33 +704,29 @@ public class LevelManager : MonoBehaviour
 
         StartCoroutine(ResetPushing());
 
+
+        if (needTraining) ActivateTraining();
+
     }
 
 
     public void DestinationReached(Drink drink) // Reached stop ("hand") trigger
     {
-
-        //StartCoroutine(ResetPushing());
-        //isPushing = false;
-
         CheckHit(drink);
         UpdateScore();
 
         UpdateTable(Random.Range(0,1));
-
     }
 
 
-    public void Miss()
+    public void Miss() // Drink leaved the playing zone
     {
         if (isPushing) // prevent false alarms when drinks is reordering.
         {
-            //StartCoroutine(ResetPushing());
-            //isPushing = false;
-            //badCount++;
             brokenCount++;
 
-            //wrongParticles.Play();
+            if (level == 1 && goodCount == 0) needTraining = true;
+
             angryParticles.Play();
 
             UpdateScore();
@@ -780,52 +736,39 @@ public class LevelManager : MonoBehaviour
     }
 
 
-    public void UpdateTable(float timer = 0)
+    public void UpdateTable(float timer = 0) // Updatig table
     {
         if (levelActive)
-        {
-            
+        {            
             PlaceDrinks();
             SetHandDirection(timer);
         }
     }
 
 
-
-
-    void UpdateScore()
+    void UpdateScore() // Show score on UI
     {
 
-        progressText.text = goodCount.ToString() + " / " + drinksForNextLevel.ToString();
         moneyText.text = money.ToString();
-
 
         if (goodCount >= drinksForNextLevel)
         {
-
-
             level++;
             PlayerPrefs.SetInt(levelSaveName, level);
             FinishLevel();
-
-            //ShuffleDrinks(drinks); // New level - shuffling drinks.
         }
-
-
     }
 
 
     IEnumerator ResetPushing() // Pause after finishing pushing to prevent accidental activation
     {
-
         yield return new WaitForSeconds(0.1f);
         isPushing = false;
     }
 
 
-    public void CheckHit(Drink drink)
+    public void CheckHit(Drink drink) // When drink reaches the hand, check if it the correct one
     {
-        //Debug.Log("Check hit " + drink.name);
 
         if (drink.correctOne)
         {
@@ -851,15 +794,15 @@ public class LevelManager : MonoBehaviour
         {
             angryParticles.Play();
             dissapointed.Play();
-            //wrongParticles.Play();
-
 
             badCount++;
+
+            if (level == 1 && goodCount == 0) needTraining = true;
         }
     }
 
 
-    public void GetUpgrade()
+    public void GetUpgrade() // Getting upgrade "currency" for the bar
     {
 
         if (isGetUpdgrade)
@@ -896,9 +839,6 @@ public class LevelManager : MonoBehaviour
         image.color = temp;
 
         SceneManager.LoadScene(2);
-
-        //Initlevel();
-
     }
 
 }

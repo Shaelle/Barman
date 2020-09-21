@@ -10,6 +10,7 @@ public class Finish : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("other name: " + other.name);
 
         Drink drink = other.GetComponent<Drink>();
 

@@ -51,7 +51,7 @@ public class Tracer : MonoBehaviour
 
         SetDirection(0, 0);
         gameObject.transform.position = start;
-        trailRenderer.Clear();
+        if (trailRenderer != null) trailRenderer.Clear();
 
     }
 
