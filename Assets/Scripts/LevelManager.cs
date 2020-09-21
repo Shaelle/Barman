@@ -60,7 +60,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI updgradesText;
     [SerializeField] GameObject getUpdgradeButton;
     [SerializeField] GameObject settingsButton;
-
+    [SerializeField] GameObject giftButton;
+ 
 
     [SerializeField] GameObject caseButton;
 
@@ -73,6 +74,7 @@ public class LevelManager : MonoBehaviour
 
 
     [SerializeField] ParticleSystem winParticles;
+    [SerializeField] ParticleSystem winParticles2;
     [SerializeField] ParticleSystem wrongParticles;
     [SerializeField] ParticlesPlayer smileParticles;
     [SerializeField] ParticlesPlayer angryParticles;
@@ -97,6 +99,7 @@ public class LevelManager : MonoBehaviour
     [Header("Other")]
 
     [SerializeField] [Range(1, 100)] int thanksChance = 40;
+    [SerializeField] [Range(1, 100)] int wowChance = 60;
 
     [SerializeField] float sensitivity = 10;
 
@@ -197,7 +200,9 @@ public class LevelManager : MonoBehaviour
         nextLevelLabel.text = "DAY " + level.ToString();
         nextlevelButton.SetActive(true);
 
-        settingsButton.SetActive(true);
+        //settingsButton.SetActive(true);
+
+        giftButton.SetActive(true);
 
         ResetLevel();
 
@@ -218,7 +223,8 @@ public class LevelManager : MonoBehaviour
         finishedLabel.SetActive(false);
 
         nextlevelButton.SetActive(false);
-        settingsButton.SetActive(false);
+        //settingsButton.SetActive(false);
+        giftButton.SetActive(false);
 
         isPushing = false;
 
@@ -251,6 +257,7 @@ public class LevelManager : MonoBehaviour
         ResetLevel();
 
         winParticles.Play();
+        winParticles2.Play();
 
         // some animations here
 
@@ -265,6 +272,9 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(3f);
 
         winParticles.Stop();
+        winParticles2.Stop();
+
+        PlayerPrefs.Save();
 
         if (!isGetUpdgrade) SceneManager.LoadScene(2);
 
@@ -299,6 +309,7 @@ public class LevelManager : MonoBehaviour
         getUpdgradeButton.SetActive(false);
 
         winParticles.Stop();
+        winParticles2.Stop();
         wrongParticles.Stop();
 
         smileParticles.Stop();
@@ -700,6 +711,8 @@ public class LevelManager : MonoBehaviour
 
         ShowTarget();
 
+        yield return new WaitForSeconds(0.2f);
+
         handSounds.Play();
 
         StartCoroutine(ResetPushing());
@@ -772,13 +785,13 @@ public class LevelManager : MonoBehaviour
 
         if (drink.correctOne)
         {
-            int n = Random.Range(0, 100);
 
-            if (n <= thanksChance)
+
+            if (Random.Range(0, 100) <= thanksChance)
             {
                 thanks.Play();
             }
-            else if (n <= thanksChance + 30)
+            else if (Random.Range(0, 100) <= wowChance)
             {
                 excited.Play();
             }
