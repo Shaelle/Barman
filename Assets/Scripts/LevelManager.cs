@@ -152,11 +152,11 @@ public class LevelManager : MonoBehaviour
     {
         nextLevelLabel = nextlevelButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
 
-        PlayerPrefs.GetInt(moneySaveName, 0);
-        PlayerPrefs.GetInt(levelSaveName, 0);
+        money =  PlayerPrefs.GetInt(moneySaveName, 0);
+        level = PlayerPrefs.GetInt(levelSaveName, 0);
 
-        PlayerPrefs.GetInt(upgradeSaveName, 0);
-        PlayerPrefs.GetFloat(upgradeProgressSaveName, 0);
+        updgrades = PlayerPrefs.GetInt(upgradeSaveName, 0);
+        upgradeProgress = PlayerPrefs.GetFloat(upgradeProgressSaveName, 0);
 
 
         Image upImage = getUpdgradeButton.GetComponent<Image>();

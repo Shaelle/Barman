@@ -29,7 +29,7 @@ public class Gift : MonoBehaviour
 
         if (image == null) Debug.LogError("Gift's image not found");
 
-        PlayerPrefs.GetFloat(fillSaveName, 0);
+        fillPercent = PlayerPrefs.GetFloat(fillSaveName, 0);
         image.fillAmount = fillPercent;
 
 
