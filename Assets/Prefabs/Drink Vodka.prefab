@@ -67,15 +67,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drink Vodka
       objectReference: {fileID: 0}
+    - target: {fileID: 1616523592529146157, guid: cba49eae69fa9464f83f1063b70ff797,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2367671050564794998, guid: cba49eae69fa9464f83f1063b70ff797,
         type: 3}
       propertyPath: m_Size.y
-      value: 0.20152116
+      value: 0.17455104
       objectReference: {fileID: 0}
     - target: {fileID: 2367671050564794998, guid: cba49eae69fa9464f83f1063b70ff797,
         type: 3}
       propertyPath: m_Center.y
-      value: 0.10926306
+      value: 0.09032734
       objectReference: {fileID: 0}
     - target: {fileID: 2367671050564794998, guid: cba49eae69fa9464f83f1063b70ff797,
         type: 3}
@@ -96,6 +101,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Center.x
       value: 0.0012656599
+      objectReference: {fileID: 0}
+    - target: {fileID: 6789743392525399435, guid: cba49eae69fa9464f83f1063b70ff797,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cba49eae69fa9464f83f1063b70ff797, type: 3}
@@ -120,7 +130,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 0525d7326a2d794458ad775ab5727f6e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.053
+      value: -0.078
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0525d7326a2d794458ad775ab5727f6e,
         type: 3}

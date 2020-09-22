@@ -17,6 +17,8 @@ public class LevelManager : MonoBehaviour
     public static float upgradeProgress = 0;
     //public static int upgradeParts = 0;
 
+    public static int rating = 1;
+
 
     public const string moneySaveName = "Money";
     const string levelSaveName = "Level";
@@ -266,6 +268,22 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator Finishinglevel()
     {
+
+        int bad = brokenCount + badCount;
+
+        if (bad == 0)
+        {
+            rating = 3;
+        }
+        else if (bad < 3)
+        {
+            rating = 2;
+        }
+        else
+        {
+            rating = 1;
+        }
+
 
         ResetLevel();
 
@@ -687,10 +705,6 @@ public class LevelManager : MonoBehaviour
         if (rand < 25) // 0 - 25 far right
         {
             SetRight(true);
-            SetLeft(false);
-
-            SetRight2(false);
-            SetLeft2(false);
 
             handSounds.transform.position = rightHand.transform.position;
             activeHand = rightTrigger.transform.position;
@@ -698,46 +712,30 @@ public class LevelManager : MonoBehaviour
         else if (rand < 50) // 25 - 50 far left
         {
             SetLeft(true);
-            SetRight(false);
-
-            SetRight2(false);
-            SetLeft2(false);
 
             handSounds.transform.position = leftHand.transform.position;
             activeHand = leftTrigger.transform.position;
         }
         else if (rand < 75) // 50 - 75 close right
         {
-            SetLeft(false);
-            SetRight(false);
-
             SetRight2(true);
-            SetLeft2(false);
 
             handSounds.transform.position = rightHand2.transform.position;
             activeHand = rightTrigger2.transform.position;
         }
         else // rest - close left
         {
-            SetLeft(false);
-            SetRight(false);
-
-            SetRight2(false);
             SetLeft2(true);
 
             handSounds.transform.position = leftHand2.transform.position;
             activeHand = leftTrigger2.transform.position;
         }
 
-
-        ShowTarget();
-
-        yield return new WaitForSeconds(0.2f);
-
         handSounds.Play();
 
+        ShowTarget();
+ 
         StartCoroutine(ResetPushing());
-
 
         if (needTraining) ActivateTraining();
 

@@ -14,16 +14,7 @@ public class HandsSounds : MonoBehaviour
 
     public void Play()
     {
-        StartCoroutine(Playing());
-    }
-
-
-    IEnumerator Playing()
-    {
-        yield return new WaitForSeconds(0.5f);
-
         int n = Random.Range(0, 100);
-
 
         if (n < 40)
         {
@@ -38,5 +29,6 @@ public class HandsSounds : MonoBehaviour
             ding.Play();
         }
     }
+
 
 }

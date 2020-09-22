@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class Stars : MonoBehaviour
 {
 
     [SerializeField] TextMeshProUGUI coinsText;
     [SerializeField] GameObject noThanks;
+
+    [SerializeField] Image star1;
+    [SerializeField] Image star2;
+    [SerializeField] Image star3;
 
     bool claimed = false;
 
@@ -17,8 +22,51 @@ public class Stars : MonoBehaviour
     {
         UpdateCoinsText();
         noThanks.SetActive(false);
+
+        star1.fillAmount = 0;
+        star2.fillAmount = 0;
+        star3.fillAmount = 0;
+
+        StartCoroutine(ShowRating());
+
         StartCoroutine(ShowNoThanks());
+
     }
+
+
+    IEnumerator ShowRating()
+    {
+        StartCoroutine(FillStar(star1));
+
+        yield return new WaitForSeconds(0.2f);
+
+        if (LevelManager.rating >= 2) StartCoroutine(FillStar(star2));
+
+        yield return new WaitForSeconds(0.2f);
+
+        if (LevelManager.rating == 3) StartCoroutine(FillStar(star3));
+    }
+
+
+    IEnumerator FillStar(Image star)
+    {
+        for (int i = 0; i <= 100; i++)
+        {
+
+            float fillPercent = Mathf.Clamp(star.fillAmount + 0.01f, 0, 1);
+            star.fillAmount = fillPercent;
+
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        star.fillAmount = 1;
+    }
+
+
+
+
+
+
 
     IEnumerator ShowNoThanks()
     {
