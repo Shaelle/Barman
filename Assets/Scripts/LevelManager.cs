@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     public static int money = 0;
+    public static int moneyLastLevel = 0;
 
     public static int level = 1;
 
@@ -48,12 +49,20 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] GameObject[] drinkSlots;
 
-    [SerializeField] Drink[] drinks;
+    [SerializeField] Drink[] allDrinks;
+
+    [SerializeField] Drink[] drinks; // TODO: convert to list
+
+    List<Drink> newDrinks;
 
     Drink[] shuffledDrinks;
+    List<Drink> shuffledDrinksList;
 
 
     [SerializeField] Rotation[] targetMarks;
+
+
+    [SerializeField] GameObject targetBackground;
 
     [Header("UI")]
 
@@ -164,7 +173,10 @@ public class LevelManager : MonoBehaviour
         nextLevelLabel = nextlevelButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
 
         money =  PlayerPrefs.GetInt(moneySaveName, 0);
+        moneyLastLevel = 0;
+
         level = PlayerPrefs.GetInt(levelSaveName, 1);
+
 
         updgrades = PlayerPrefs.GetInt(upgradeSaveName, 0);
         upgradeProgress = PlayerPrefs.GetFloat(upgradeProgressSaveName, 0);
@@ -177,6 +189,9 @@ public class LevelManager : MonoBehaviour
 
         upImage.fillAmount = upgradeProgress;
 
+
+        newDrinks = new List<Drink>();
+        
 
     }
 
@@ -196,6 +211,32 @@ public class LevelManager : MonoBehaviour
     {
 
         levelActive = false;
+
+
+        foreach (Drink drink in allDrinks)
+        {
+
+            drink.transform.position = Vector3.zero;
+            drink.SetDirection(0, 0);
+
+            if (drink.starterPack)
+            {
+                drink.available = true;
+            }
+            else
+            {
+                drink.available = (PlayerPrefs.GetInt(drink.kind.ToString(), 0) == 1) ? true : false;
+            }
+
+            //if (drink.kind == Drink.Kinds.Drink1) drink.available = true;
+
+            if (drink.available)
+            {
+                newDrinks.Add(drink);
+            }
+
+        }
+
 
         startMelody.gameObject.SetActive(true);
 
@@ -250,10 +291,11 @@ public class LevelManager : MonoBehaviour
 
 
         ShuffleDrinks(drinks);
+        ShuffleDrinks(newDrinks);
+
        
         UpdateTable();
         UpdateScore();
-
 
     }
 
@@ -292,6 +334,8 @@ public class LevelManager : MonoBehaviour
         //winParticles.Play();
         winParticles2.Play();
 
+        yield return new WaitForSeconds(0.5f);
+
         // some animations here
 
         yield return new WaitForSeconds(2f);
@@ -302,7 +346,7 @@ public class LevelManager : MonoBehaviour
               
         updgradesText.text = updgrades.ToString();
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1.2f);
 
         winParticles.Stop();
         winParticles2.Stop();
@@ -321,6 +365,8 @@ public class LevelManager : MonoBehaviour
     {
 
         isPushing = true;
+
+        targetBackground.SetActive(false);
 
         rightHand.SetActive(false);
         rightTrigger.SetActive(false);
@@ -349,11 +395,24 @@ public class LevelManager : MonoBehaviour
         angryParticles.Stop();
 
 
-        foreach (Drink drink in drinks)
+
+        if (shuffledDrinksList == null)
         {
-            drink.SetDirection(0, 0);
-            drink.transform.position = Vector3.zero;
-            drink.gameObject.SetActive(false);
+            foreach (Drink drink in drinks)
+            {
+                drink.SetDirection(0, 0);
+                drink.transform.position = Vector3.zero;
+                drink.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            foreach (Drink drink in newDrinks)
+            {
+                drink.SetDirection(0, 0);
+                drink.transform.position = Vector3.zero;
+                drink.gameObject.SetActive(false);
+            }
         }
 
 
@@ -589,23 +648,50 @@ public class LevelManager : MonoBehaviour
     void PlaceDrinks() // Placing drinks on the table. Choosing the selected one.
     {
 
-        foreach (Drink drink in drinks)
+        if (shuffledDrinksList == null)
         {
-            drink.transform.position = Vector3.zero;
-            drink.transform.rotation = Quaternion.identity;
-            drink.SetDirection(0, 0);
+            foreach (Drink drink in drinks)
+            {
+                drink.transform.position = Vector3.zero;
+                drink.transform.rotation = Quaternion.identity;
+                drink.SetDirection(0, 0);
+            }
+        }
+        else
+        {
+            foreach (Drink drink in newDrinks)
+            {
+                drink.transform.position = Vector3.zero;
+                drink.transform.rotation = Quaternion.identity;
+                drink.SetDirection(0, 0);
+            }
         }
 
         
         for (int i = 0; i < drinkSlots.Length; i++)
         {
-            shuffledDrinks[i].transform.position = drinkSlots[i].transform.position;
-            shuffledDrinks[i].correctOne = false;
+            if (shuffledDrinksList == null)
+            {
+                shuffledDrinks[i].transform.position = drinkSlots[i].transform.position;
+                shuffledDrinks[i].correctOne = false;
+            }
+            else
+            {
+                shuffledDrinksList[i].transform.position = drinkSlots[i].transform.position;
+                shuffledDrinksList[i].correctOne = false;
+            }
         }
 
         int n = Random.Range(0, drinkSlots.Length - 1); // Randomly selecting one drink as "ordered by client"
 
-        shuffledDrinks[n].correctOne = true;
+        if (shuffledDrinksList == null)
+        {
+            shuffledDrinks[n].correctOne = true;
+        }
+        else
+        {
+            shuffledDrinksList[n].correctOne = true;
+        }
 
         targetNom = n;
 
@@ -622,18 +708,31 @@ public class LevelManager : MonoBehaviour
         {
             target.gameObject.SetActive(false);
         }
+
+        targetBackground.SetActive(false);
     }
 
 
     void ShowTarget() // Showing mark for the selected drink
     {
 
-        Drink.Kinds kind = shuffledDrinks[targetNom].kind;
+        Drink.Kinds kind;
+
+        if (shuffledDrinksList == null)
+        {
+            kind = shuffledDrinks[targetNom].kind;
+        }
+        else
+        {
+            kind = shuffledDrinksList[targetNom].kind;
+        }
 
         foreach (Rotation target in targetMarks)
         {
             target.gameObject.SetActive(target.kind == kind);
         }
+
+        targetBackground.SetActive(true);
     }
 
 
@@ -654,6 +753,44 @@ public class LevelManager : MonoBehaviour
     }
 
 
+    private void ShuffleDrinks(List<Drink> drinks) // Shuffling drinks like a cards. The first (four) in the list will be go to the table
+    {
+
+        if (drinks == null)
+        {
+            Debug.LogWarning("List of drinks is null!");
+            return;
+        }
+
+        List<Drink> newArray = new List<Drink>(drinks);
+
+        for (int i = 0; i < newArray.Count; i++)
+        {
+            Drink tmp = newArray[i];
+            int r = Random.Range(i, newArray.Count);
+            newArray[i] = newArray[r];
+            newArray[r] = tmp;
+        }
+
+        shuffledDrinksList = new List<Drink>(newArray);
+    }
+
+
+    /*
+             List<Drink> drinks2 = new List<Drink>(newDrinks);
+
+        Debug.Log("New drinks: ");
+        foreach (Drink drink in newDrinks)
+        {
+            Debug.Log(drink.kind.ToString());
+        }
+
+        Debug.Log("drinks2: ");
+        foreach (Drink drink in drinks2)
+        {
+            Debug.Log(drink.kind.ToString());
+        }
+        */
 
     void SetHandDirection(float timer) // Randomly setting directions, from which a hand is coming
     {
@@ -781,7 +918,7 @@ public class LevelManager : MonoBehaviour
     void UpdateScore() // Show score on UI
     {
 
-        moneyText.text = money.ToString();
+        moneyText.text = (money + moneyLastLevel).ToString(); // money.ToString();
 
         if (goodCount >= drinksForNextLevel)
         {
@@ -816,8 +953,9 @@ public class LevelManager : MonoBehaviour
             }
 
             goodCount++;
-            money += Random.Range(minCoins, maxCoins);
-            PlayerPrefs.SetInt(moneySaveName, money);
+            moneyLastLevel += Random.Range(minCoins, maxCoins);
+
+            //PlayerPrefs.SetInt(moneySaveName, money);
 
             if (Random.Range(0,100) <= smilesChance) smileParticles.Play();
 

@@ -5,6 +5,10 @@ using UnityEngine;
 public class Drink : MonoBehaviour
 {
 
+    public bool available = false;
+
+    public bool starterPack = false;
+
     public float speed = 5f;
     [SerializeField] float sideSpeed = 5f;
 

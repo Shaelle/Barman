@@ -15,6 +15,8 @@ public class Stars : MonoBehaviour
     [SerializeField] Image star2;
     [SerializeField] Image star3;
 
+    [SerializeField] TextMeshProUGUI day;
+
     bool claimed = false;
 
     // Start is called before the first frame update
@@ -26,6 +28,8 @@ public class Stars : MonoBehaviour
         star1.fillAmount = 0;
         star2.fillAmount = 0;
         star3.fillAmount = 0;
+
+        day.text = "DAY " + LevelManager.level;
 
         StartCoroutine(ShowRating());
 
@@ -83,6 +87,7 @@ public class Stars : MonoBehaviour
 
     public void NoThanks()
     {
+        SaveMoney();
         StartCoroutine(LoadingScene(0));
     }
 
@@ -94,9 +99,9 @@ public class Stars : MonoBehaviour
 
         // Some actions here
 
-        LevelManager.money *= 2;
+        LevelManager.moneyLastLevel *= 2;
 
-        PlayerPrefs.SetInt(LevelManager.moneySaveName, LevelManager.money);
+        SaveMoney();
 
         UpdateCoinsText();
 
@@ -108,12 +113,20 @@ public class Stars : MonoBehaviour
 
     public void Skip()
     {
+        SaveMoney();
         SceneManager.LoadScene(0);
+    }
+
+
+    void SaveMoney()
+    {
+        LevelManager.money += LevelManager.moneyLastLevel;
+        PlayerPrefs.SetInt(LevelManager.moneySaveName, LevelManager.money);
     }
 
     void UpdateCoinsText()
     {
-        coinsText.text = LevelManager.money.ToString();
+        coinsText.text = LevelManager.moneyLastLevel.ToString();
     }
 
 

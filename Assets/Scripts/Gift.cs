@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class Gift : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class Gift : MonoBehaviour
     [SerializeField] GameObject getGift;
 
     [SerializeField] AudioSource sound;
+
+    [SerializeField] TextMeshProUGUI day;
 
     Image image;
 
@@ -44,6 +47,8 @@ public class Gift : MonoBehaviour
         adding = false;
 
         sound.Stop();
+
+        day.text = "DAY " + LevelManager.level;
 
         StartCoroutine(AddingGift());
 

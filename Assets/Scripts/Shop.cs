@@ -3,22 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class Shop : MonoBehaviour
 {
 
     [SerializeField] TextMeshProUGUI coinsText;
 
+    Vector2 pointerPos;
+
     // Start is called before the first frame update
     void Start()
     {
         UpdateCoinsText();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
 
@@ -37,5 +34,40 @@ public class Shop : MonoBehaviour
     {
         yield return new WaitForSeconds(0.3f);
         SceneManager.LoadScene(sceneIndex);
+    }
+
+
+    void OnMove(InputValue value)
+    {
+        pointerPos = value.Get<Vector2>();
+    }
+
+
+    void OnPress(InputValue value) 
+    {
+        if (value.isPressed)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(pointerPos);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                GameObject hitObject = hit.transform.gameObject;
+                Product product = hitObject.GetComponent<Product>();
+
+                if (product != null)
+                {
+                    if (LevelManager.money >= product.price)
+                    {
+                        LevelManager.money -= product.price;
+                        product.Sell();
+                        UpdateCoinsText();
+                    }
+                    
+                }
+               
+            }
+
+        }
     }
 }
