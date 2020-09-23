@@ -29,7 +29,7 @@ public class Stars : MonoBehaviour
         star2.fillAmount = 0;
         star3.fillAmount = 0;
 
-        day.text = "DAY " + LevelManager.level;
+        day.text = "DAY " + (LevelManager.level - 1);
 
         StartCoroutine(ShowRating());
 

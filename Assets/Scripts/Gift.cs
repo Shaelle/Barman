@@ -48,7 +48,7 @@ public class Gift : MonoBehaviour
 
         sound.Stop();
 
-        day.text = "DAY " + LevelManager.level;
+        day.text = "DAY " + (LevelManager.level - 1);
 
         StartCoroutine(AddingGift());
 
