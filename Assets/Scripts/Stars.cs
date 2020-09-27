@@ -15,6 +15,11 @@ public class Stars : MonoBehaviour
     [SerializeField] Image star2;
     [SerializeField] Image star3;
 
+    [SerializeField] AudioSource soundStar1;
+    [SerializeField] AudioSource soundStar2;
+    [SerializeField] AudioSource soundStar3;
+
+
     [SerializeField] TextMeshProUGUI day;
 
     bool claimed = false;
@@ -32,6 +37,26 @@ public class Stars : MonoBehaviour
         day.text = "DAY " + (LevelManager.level - 1);
 
         StartCoroutine(ShowRating());
+
+
+        switch (LevelManager.rating)
+        {
+            case 1:
+                soundStar1.Play();
+                break;
+
+            case 2:
+                soundStar2.Play();
+                break;
+
+            case 3:
+                soundStar3.Play();
+                break;
+
+            default:
+                Debug.LogError("Wrong rating. Must be in range 1 - 3, actual value: " + LevelManager.rating);
+                break;
+        }
 
         StartCoroutine(ShowNoThanks());
 

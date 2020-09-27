@@ -37,6 +37,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject rightHand;
     [SerializeField] GameObject rightHand2;
 
+    Animator activeHandAnimator;
+
 
     [SerializeField] GameObject leftTrigger;
     [SerializeField] GameObject leftTrigger2;
@@ -493,6 +495,7 @@ public class LevelManager : MonoBehaviour
 
 
 
+
     public void TracerReset(Tracer tracer) // Retuning tracer to it's starting position
     {
 
@@ -826,6 +829,7 @@ public class LevelManager : MonoBehaviour
             leftTrigger2.SetActive(active);
         }
 
+        if (activeHandAnimator != null) activeHandAnimator.Rebind();
 
         SetRight(false); 
         SetLeft(false);
@@ -833,7 +837,7 @@ public class LevelManager : MonoBehaviour
         SetRight2(false);
         SetLeft2(false);
 
-
+        
         yield return new WaitForSeconds(timer);
 
         int rand = Random.Range(0, 100);
@@ -845,6 +849,7 @@ public class LevelManager : MonoBehaviour
 
             handSounds.transform.position = rightHand.transform.position;
             activeHand = rightTrigger.transform.position;
+            activeHandAnimator = rightHand.transform.GetChild(0).transform.GetComponent<Animator>();
         }
         else if (rand < 50) // 25 - 50 far left
         {
@@ -852,6 +857,7 @@ public class LevelManager : MonoBehaviour
 
             handSounds.transform.position = leftHand.transform.position;
             activeHand = leftTrigger.transform.position;
+            activeHandAnimator = leftHand.transform.GetChild(0).transform.GetComponent<Animator>();
         }
         else if (rand < 75) // 50 - 75 close right
         {
@@ -859,6 +865,7 @@ public class LevelManager : MonoBehaviour
 
             handSounds.transform.position = rightHand2.transform.position;
             activeHand = rightTrigger2.transform.position;
+            activeHandAnimator = rightHand2.transform.GetChild(0).transform.GetComponent<Animator>();
         }
         else // rest - close left
         {
@@ -866,6 +873,7 @@ public class LevelManager : MonoBehaviour
 
             handSounds.transform.position = leftHand2.transform.position;
             activeHand = leftTrigger2.transform.position;
+            activeHandAnimator = leftHand2.transform.GetChild(0).transform.GetComponent<Animator>();
         }
 
         handSounds.Play();
@@ -881,10 +889,21 @@ public class LevelManager : MonoBehaviour
 
     public void DestinationReached(Drink drink) // Reached stop ("hand") trigger
     {
+        StartCoroutine(Reaching(drink));        
+    }
+
+    IEnumerator Reaching(Drink drink)
+    {
+        activeHandAnimator.Play("Clamp");
+
         CheckHit(drink);
         UpdateScore();
 
-        UpdateTable(Random.Range(minHandDelay,maxHandDelay));
+        yield return new WaitForSeconds(0.7f);
+
+
+        UpdateTable(Random.Range(minHandDelay, maxHandDelay));
+
     }
 
 
