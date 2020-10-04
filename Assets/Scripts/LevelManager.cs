@@ -32,18 +32,11 @@ public class LevelManager : MonoBehaviour
 
     [Header("General")]
 
-    [SerializeField] GameObject leftHand; //TODO: array of new prefabs
-    [SerializeField] GameObject leftHand2;
-    [SerializeField] GameObject rightHand;
-    [SerializeField] GameObject rightHand2;
+    [SerializeField] Hand leftHand;
+    [SerializeField] Hand leftHand2;
+    [SerializeField] Hand rightHand;
+    [SerializeField] Hand rightHand2;
 
-    Animator activeHandAnimator;
-
-
-    [SerializeField] GameObject leftTrigger;
-    [SerializeField] GameObject leftTrigger2;
-    [SerializeField] GameObject rightTrigger;
-    [SerializeField] GameObject rightTrigger2;
 
     [Header("Drinks")]
 
@@ -146,7 +139,7 @@ public class LevelManager : MonoBehaviour
     Vector3 start;
     Vector3 target;
 
-    Vector3 activeHand;
+    Hand activeHand;
 
     bool isGetUpdgrade = false;
 
@@ -370,21 +363,14 @@ public class LevelManager : MonoBehaviour
 
         targetBackground.SetActive(false);
 
-        rightHand.SetActive(false);
-        rightTrigger.SetActive(false);
+        rightHand.gameObject.SetActive(false);
 
-        leftHand.SetActive(false);
-        leftTrigger.SetActive(false);
+        leftHand.gameObject.SetActive(false);
 
+        rightHand2.gameObject.SetActive(false);
 
-        rightHand2.SetActive(false);
-        rightTrigger2.SetActive(false);
+        leftHand2.gameObject.SetActive(false);
 
-        leftHand2.SetActive(false);
-        leftTrigger2.SetActive(false);
-
-
-        activeHand = Vector3.zero;
 
         updgradesText.gameObject.SetActive(false);
         getUpdgradeButton.SetActive(false);
@@ -562,7 +548,7 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        target = activeHand;
+        target = activeHand.target.position;
 
         training = true;
 
@@ -805,31 +791,26 @@ public class LevelManager : MonoBehaviour
     IEnumerator SettingDirection(float timer) // Choosing randomely, from which direction "customer's hand" will appear
     {
 
-        void SetRight(bool active) //TODO: simplify (with new prefabs?)
+        void SetRight(bool active) //TODO: simplify 
         {
-            rightHand.SetActive(active);
-            rightTrigger.SetActive(active);
+            rightHand.gameObject.SetActive(active);
         }
 
         void SetLeft(bool active)
         {
-            leftHand.SetActive(active);
-            leftTrigger.SetActive(active);
+            leftHand.gameObject.SetActive(active);
         }
 
         void SetRight2(bool active)
         {
-            rightHand2.SetActive(active);
-            rightTrigger2.SetActive(active);
+            rightHand2.gameObject.SetActive(active);
+
         }
 
         void SetLeft2(bool active)
         {
-            leftHand2.SetActive(active);
-            leftTrigger2.SetActive(active);
+            leftHand2.gameObject.SetActive(active);
         }
-
-        if (activeHandAnimator != null) activeHandAnimator.Rebind();
 
         SetRight(false); 
         SetLeft(false);
@@ -848,32 +829,28 @@ public class LevelManager : MonoBehaviour
             SetRight(true);
 
             handSounds.transform.position = rightHand.transform.position;
-            activeHand = rightTrigger.transform.position;
-            activeHandAnimator = rightHand.transform.GetChild(0).transform.GetComponent<Animator>();
+            activeHand = rightHand;
         }
         else if (rand < 50) // 25 - 50 far left
         {
             SetLeft(true);
 
             handSounds.transform.position = leftHand.transform.position;
-            activeHand = leftTrigger.transform.position;
-            activeHandAnimator = leftHand.transform.GetChild(0).transform.GetComponent<Animator>();
+            activeHand = leftHand;
         }
         else if (rand < 75) // 50 - 75 close right
         {
             SetRight2(true);
 
             handSounds.transform.position = rightHand2.transform.position;
-            activeHand = rightTrigger2.transform.position;
-            activeHandAnimator = rightHand2.transform.GetChild(0).transform.GetComponent<Animator>();
+            activeHand = rightHand2;
         }
         else // rest - close left
         {
             SetLeft2(true);
 
             handSounds.transform.position = leftHand2.transform.position;
-            activeHand = leftTrigger2.transform.position;
-            activeHandAnimator = leftHand2.transform.GetChild(0).transform.GetComponent<Animator>();
+            activeHand = leftHand2;
         }
 
         handSounds.Play();
@@ -894,7 +871,7 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator Reaching(Drink drink)
     {
-        activeHandAnimator.Play("Clamp");
+        activeHand.Grab();
 
         CheckHit(drink);
         UpdateScore();
