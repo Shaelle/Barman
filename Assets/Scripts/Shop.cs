@@ -10,7 +10,11 @@ public class Shop : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI coinsText;
 
+    [SerializeField] ParticleSystem selectionParticles;
+
     Vector2 pointerPos;
+
+    Product selectedProduct;
 
     // Start is called before the first frame update
     void Start()
@@ -57,17 +61,30 @@ public class Shop : MonoBehaviour
 
                 if (product != null)
                 {
-                    if (LevelManager.money >= product.price)
-                    {
-                        LevelManager.money -= product.price;
-                        product.Sell();
-                        UpdateCoinsText();
-                    }
+                    if (selectedProduct != null) selectedProduct.Deselect();
+
+                    selectedProduct = product;
+                    selectedProduct.Select();
+
+                    selectionParticles.transform.position = new Vector3(product.transform.position.x, product.transform.position.y + 0.3f, product.transform.position.z);
+                    if (!selectionParticles.gameObject.activeSelf) selectionParticles.gameObject.SetActive(true);
                     
                 }
                
             }
 
+        }
+    }
+
+
+    public void Sell()
+    {
+        if (selectedProduct != null && LevelManager.money >= selectedProduct.price)
+        {
+            selectedProduct.Sell();
+            UpdateCoinsText();
+            selectedProduct = null;
+            selectionParticles.gameObject.SetActive(false);
         }
     }
 }

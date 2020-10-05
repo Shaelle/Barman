@@ -32,6 +32,15 @@ public class Product : MonoBehaviour
         }
     }
 
+    public void Select()
+    {
+
+    }
+
+    public void Deselect()
+    {
+
+    }
 
     public void Sell()
     {
