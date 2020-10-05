@@ -13,21 +13,27 @@ public class Hand : MonoBehaviour
 
     GameObject activeHand;
 
+    Vector3 defaultPosition;
+
     [SerializeField] [Range(1, 100)] int pawChance = 25;
-    
 
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
+        defaultPosition = transform.position;
+    }
+
+
+
+    private void OnEnable()
+    {
+
+        transform.position = defaultPosition;
+
         ChooseArm();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 
     void ChooseArm()
     {
@@ -49,8 +55,15 @@ public class Hand : MonoBehaviour
         }
     }
 
-    public void Grab()
+
+
+    public void Grab(Vector3 drinkPos)
     {
+
+       // Debug.Log("drink: " + drinkPos + " target: " + tar)
+
+       // transform.position =  drinkPos;
+
         Animator animator = activeHand.GetComponent<Animator>();
 
         if (animator != null)
@@ -58,5 +71,6 @@ public class Hand : MonoBehaviour
             animator.Play("Clamp");
             animator.Rebind();
         }
+
     }
 }

@@ -871,7 +871,7 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator Reaching(Drink drink)
     {
-        activeHand.Grab();
+        activeHand.Grab(drink.transform.position);
 
         CheckHit(drink);
         UpdateScore();
