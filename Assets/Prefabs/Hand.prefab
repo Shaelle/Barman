@@ -49,7 +49,7 @@ MonoBehaviour:
   target: {fileID: 6183113590791290993}
   hand: {fileID: 2771050731490987570}
   paw: {fileID: 5500443260202830825}
-  pawChance: 10
+  pawChance: 5
 --- !u!1 &7799740100181762304
 GameObject:
   m_ObjectHideFlags: 0
