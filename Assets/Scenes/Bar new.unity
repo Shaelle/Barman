@@ -42995,8 +42995,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1042263077}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -4.15, y: -0.661, z: 4.907}
-  m_LocalScale: {x: 15.895823, y: 11.342734, z: 1}
+  m_LocalPosition: {x: -11.15, y: -0.661, z: 4.907}
+  m_LocalScale: {x: 28.718199, y: 22.306992, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 44
@@ -96454,7 +96454,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
+  m_Color: {r: 0.8997778, g: 0.9528302, b: 0.84046817, a: 1}
   m_Intensity: 0.5
   m_Range: 10
   m_SpotAngle: 30
@@ -96938,7 +96938,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -49.5, y: 28.4}
-  m_SizeDelta: {x: 99.11763, y: 82.7077}
+  m_SizeDelta: {x: 99, y: 82}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2111702269
 MonoBehaviour:
