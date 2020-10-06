@@ -11,10 +11,13 @@ public class Product : MonoBehaviour
     Rotation drink;
     TextMesh priceTag;
 
+    Vector3 defaultScale;
+
     private void Awake()
     {
         drink = transform.GetChild(0).gameObject.GetComponent<Rotation>();
         priceTag = transform.GetChild(1).gameObject.GetComponent<TextMesh>();
+        defaultScale = transform.localScale;
     }
 
     // Start is called before the first frame update
@@ -34,12 +37,12 @@ public class Product : MonoBehaviour
 
     public void Select()
     {
-
+        transform.localScale *= 1.5f;
     }
 
     public void Deselect()
     {
-
+        transform.localScale = defaultScale;
     }
 
     public void Sell()
@@ -47,6 +50,10 @@ public class Product : MonoBehaviour
         PlayerPrefs.SetInt(drink.kind.ToString(), 1);
         sold = true;
         priceTag.text = "sold";
+        LevelManager.money -= price;
+
+        PlayerPrefs.SetInt(LevelManager.moneySaveName, LevelManager.money);
+
     }
 
     public void SellForDiamonds()
@@ -54,6 +61,9 @@ public class Product : MonoBehaviour
         //PlayerPrefs.SetInt(drink.kind.ToString(), 1);
         sold = true;
         priceTag.text = "sold";
+        LevelManager.diamonds -= price;
+
+        PlayerPrefs.SetInt(LevelManager.diamondsSaveName, LevelManager.diamonds);
     }
 
 }
