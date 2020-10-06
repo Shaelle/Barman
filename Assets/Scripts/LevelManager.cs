@@ -11,6 +11,8 @@ public class LevelManager : MonoBehaviour
     public static int money = 0;
     public static int moneyLastLevel = 0;
 
+    public static int diamonds = 0;
+
     public static int level = 1;
 
 
@@ -22,6 +24,7 @@ public class LevelManager : MonoBehaviour
 
 
     public const string moneySaveName = "Money";
+    public const string diamondsSaveName = "Diamonds";
     const string levelSaveName = "Level";
     const string upgradeSaveName = "Upgrades";
     const string upgradeProgressSaveName = "UpdgradeProgress";
@@ -62,6 +65,7 @@ public class LevelManager : MonoBehaviour
     [Header("UI")]
 
     [SerializeField] TextMeshProUGUI moneyText;
+    [SerializeField] TextMeshProUGUI diamondsText;
 
     [SerializeField] TextMeshProUGUI updgradesText;
     [SerializeField] GameObject getUpdgradeButton;
@@ -70,6 +74,7 @@ public class LevelManager : MonoBehaviour
  
 
     [SerializeField] GameObject caseButton;
+    [SerializeField] GameObject shop2Button; 
 
     [SerializeField] GameObject nextlevelButton;
     TextMeshProUGUI nextLevelLabel;
@@ -170,6 +175,8 @@ public class LevelManager : MonoBehaviour
         money =  PlayerPrefs.GetInt(moneySaveName, 0);
         moneyLastLevel = 0;
 
+        diamonds = PlayerPrefs.GetInt(diamondsSaveName, 0);
+
         level = PlayerPrefs.GetInt(levelSaveName, 1);
 
 
@@ -240,6 +247,7 @@ public class LevelManager : MonoBehaviour
         brokenCount = 0;
        
         caseButton.SetActive(true);
+        shop2Button.SetActive(true);
         finishedLabel.SetActive(false);
 
         if (nextLevelLabel == null) Debug.LogError("No text component for level label");
@@ -257,6 +265,8 @@ public class LevelManager : MonoBehaviour
 
         moneyText.text = money.ToString();
 
+        diamondsText.text = diamonds.ToString();
+
         drinksForNextLevel = Random.Range(minDrinksForNextLevel, maxDrinksForNextLevel);
     }
 
@@ -269,6 +279,7 @@ public class LevelManager : MonoBehaviour
         startMelody.gameObject.SetActive(false);
 
         caseButton.SetActive(false);
+        shop2Button.SetActive(false);
         finishedLabel.SetActive(false);
 
         nextlevelButton.SetActive(false);
@@ -427,6 +438,13 @@ public class LevelManager : MonoBehaviour
     {
         StartCoroutine(LoadingScene(1));
     }
+
+    public void GoToShop2() // Opening the second shop
+    {
+        StartCoroutine(LoadingScene(4)); // TODO: switch to names
+    }
+
+
 
     IEnumerator LoadingScene(int sceneIndex) // Small pause before loading next scene, so click sound on the button can play
     {
@@ -890,6 +908,8 @@ public class LevelManager : MonoBehaviour
         {
             brokenCount++;
 
+            Handheld.Vibrate();
+
             if (level == 1 && goodCount == 0) needTraining = true;
 
             if (Random.Range(0,100) <= smilesChance) angryParticles.Play();
@@ -915,6 +935,10 @@ public class LevelManager : MonoBehaviour
     {
 
         moneyText.text = (money + moneyLastLevel).ToString(); // money.ToString();
+
+        diamondsText.text = diamonds.ToString();
+
+
 
         if (goodCount >= drinksForNextLevel)
         {
@@ -959,6 +983,9 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
+
+            Handheld.Vibrate();
+
             if (Random.Range(0,100) <= smilesChance) angryParticles.Play();
 
             dissapointed.Play();

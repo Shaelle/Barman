@@ -147,7 +147,10 @@ public class Stars : MonoBehaviour
     {
         LevelManager.money += LevelManager.moneyLastLevel;
         PlayerPrefs.SetInt(LevelManager.moneySaveName, LevelManager.money);
+
+        PlayerPrefs.SetInt(LevelManager.diamondsSaveName, LevelManager.diamonds);
     }
+
 
     void UpdateCoinsText()
     {

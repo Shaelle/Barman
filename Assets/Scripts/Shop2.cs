@@ -5,14 +5,12 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
-public class Shop : MonoBehaviour
+public class Shop2 : MonoBehaviour
 {
 
     [SerializeField] TextMeshProUGUI coinsText;
 
     [SerializeField] ParticleSystem selectionParticles;
-
-    [SerializeField] bool usingDiamonds = false;
 
     Vector2 pointerPos;
 
@@ -27,14 +25,7 @@ public class Shop : MonoBehaviour
 
     void UpdateCoinsText()
     {
-        if (usingDiamonds)
-        {
-            coinsText.text = LevelManager.diamonds.ToString();
-        }
-        else
-        {
-            coinsText.text = LevelManager.money.ToString();
-        }
+        coinsText.text = LevelManager.money.ToString();
     }
 
     public void ReturnToBar()
@@ -96,17 +87,4 @@ public class Shop : MonoBehaviour
             selectionParticles.gameObject.SetActive(false);
         }
     }
-
-
-    public void SellForDiamonds()
-    {
-        if (selectedProduct != null && LevelManager.diamonds >= selectedProduct.price)
-        {
-            selectedProduct.SellForDiamonds();
-            UpdateCoinsText();
-            selectedProduct = null;
-            selectionParticles.gameObject.SetActive(false);
-        }
-    }
-
 }

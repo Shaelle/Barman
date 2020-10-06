@@ -49,4 +49,11 @@ public class Product : MonoBehaviour
         priceTag.text = "sold";
     }
 
+    public void SellForDiamonds()
+    {
+        //PlayerPrefs.SetInt(drink.kind.ToString(), 1);
+        sold = true;
+        priceTag.text = "sold";
+    }
+
 }
