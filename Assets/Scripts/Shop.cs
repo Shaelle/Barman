@@ -75,8 +75,8 @@ public class Shop : MonoBehaviour
                     selectedProduct = product;
                     selectedProduct.Select();
 
-                    selectionParticles.transform.position = new Vector3(product.transform.position.x, product.transform.position.y + 0.3f, product.transform.position.z);
-                    if (!selectionParticles.gameObject.activeSelf) selectionParticles.gameObject.SetActive(true);
+                    //selectionParticles.transform.position = new Vector3(product.transform.position.x, product.transform.position.y + 0.3f, product.transform.position.z);
+                    //if (!selectionParticles.gameObject.activeSelf) selectionParticles.gameObject.SetActive(true);
                     
                 }
                
@@ -93,7 +93,7 @@ public class Shop : MonoBehaviour
             selectedProduct.Sell();
             UpdateCoinsText();
             selectedProduct = null;
-            selectionParticles.gameObject.SetActive(false);
+            //selectionParticles.gameObject.SetActive(false);
         }
     }
 
@@ -105,7 +105,7 @@ public class Shop : MonoBehaviour
             selectedProduct.SellForDiamonds();
             UpdateCoinsText();
             selectedProduct = null;
-            selectionParticles.gameObject.SetActive(false);
+            //selectionParticles.gameObject.SetActive(false);
         }
     }
 
