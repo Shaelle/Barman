@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Product : MonoBehaviour
 {
@@ -9,9 +10,13 @@ public class Product : MonoBehaviour
     bool sold = false;
 
     Rotation drink;
-    TextMesh priceTag;
+    [SerializeField] TextMeshProUGUI priceTag;
+
+    [SerializeField] Shop shop;
 
     Vector3 defaultScale;
+
+    
 
     public enum Kinds { Drink, Table, Theme}
 
@@ -20,12 +25,18 @@ public class Product : MonoBehaviour
     private void Awake()
     {
         drink = transform.GetChild(0).gameObject.GetComponent<Rotation>();
-        priceTag = transform.GetChild(1).gameObject.GetComponent<TextMesh>();
+        //priceTag = transform.GetChild(1).gameObject.GetComponent<TextMesh>();
         defaultScale = transform.localScale;
     }
 
     // Start is called before the first frame update
     void Start()
+    {
+        UpdatePriceTag();
+    }
+
+
+    void UpdatePriceTag()
     {
         if (PlayerPrefs.GetInt(drink.kind.ToString(), 0) == 1) // Drink already purchased - remove from list
         {
@@ -39,15 +50,35 @@ public class Product : MonoBehaviour
         }
     }
 
+
     public void Select()
     {
+        if (shop.selectedProduct != null) shop.selectedProduct.Deselect();
         transform.localScale *= 1.5f;
+
+        shop.selectedProduct = this;
     }
+
 
     public void Deselect()
     {
         transform.localScale = defaultScale;
     }
+
+
+    public void Show()
+    {
+        drink.gameObject.SetActive(true);
+        UpdatePriceTag();
+    }
+
+
+    public void Hide()
+    {
+        drink.gameObject.SetActive(false);
+        priceTag.text = "";
+    }
+
 
     public void Sell()
     {

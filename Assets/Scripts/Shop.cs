@@ -20,9 +20,12 @@ public class Shop : MonoBehaviour
 
     [SerializeField] Image shopImage;
 
+    [SerializeField] Product[] drinks;
+
+
     Vector2 pointerPos;
 
-    Product selectedProduct;
+    public Product selectedProduct;
 
     // Start is called before the first frame update
     void Start()
@@ -55,6 +58,11 @@ public class Shop : MonoBehaviour
         if (shopImage.sprite == drinkShop) return;
 
         shopImage.sprite = drinkShop;
+
+        foreach (Product product in drinks)
+        {
+            product.Show();
+        }
     }
 
 
@@ -63,6 +71,12 @@ public class Shop : MonoBehaviour
         if (shopImage.sprite == tableShop) return;
 
         shopImage.sprite = tableShop;
+
+        foreach (Product product in drinks)
+        {
+            product.Hide();
+        }
+
     }
 
 
@@ -81,6 +95,7 @@ public class Shop : MonoBehaviour
 
     void OnPress(InputValue value) 
     {
+        /*
         if (value.isPressed)
         {
             Ray ray = Camera.main.ScreenPointToRay(pointerPos);
@@ -106,6 +121,7 @@ public class Shop : MonoBehaviour
             }
 
         }
+        */
     }
 
 

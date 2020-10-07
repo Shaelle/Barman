@@ -28,6 +28,7 @@ public class LevelManager : MonoBehaviour
     const string levelSaveName = "Level";
     const string upgradeSaveName = "Upgrades";
     const string upgradeProgressSaveName = "UpdgradeProgress";
+    const string firstLaunch = "FirstLaunch";
 
     const int fullUpgradeParts = 5;
 
@@ -166,6 +167,11 @@ public class LevelManager : MonoBehaviour
 
     Coroutine coTracers;
 
+    bool isChangingHand = false;
+
+
+    bool isFirstLaunch = false;
+
 
   
     private void Awake()
@@ -179,6 +185,7 @@ public class LevelManager : MonoBehaviour
 
         level = PlayerPrefs.GetInt(levelSaveName, 1);
 
+        isFirstLaunch = (PlayerPrefs.GetInt(firstLaunch,1) == 1) ?  true : false;
 
         updgrades = PlayerPrefs.GetInt(upgradeSaveName, 0);
         upgradeProgress = PlayerPrefs.GetFloat(upgradeProgressSaveName, 0);
@@ -203,9 +210,12 @@ public class LevelManager : MonoBehaviour
     {
         if (drinkSlots.Length > drinks.Length) Debug.LogWarning("Number of drinks should be equal or bigger than the number of slots! Slots: " + drinkSlots.Length+", drinks: " +drinks.Length);
 
-        Initlevel();
+        Initlevel();       
 
         needTraining = (level == 1) ? true : false;
+
+
+        if (isFirstLaunch) StartLevel();
     }
 
 
@@ -275,6 +285,12 @@ public class LevelManager : MonoBehaviour
     {
 
         levelActive = true;
+
+        if (isFirstLaunch)
+        {
+            PlayerPrefs.SetInt(firstLaunch, 0);
+            isFirstLaunch = false;
+        }
 
         startMelody.gameObject.SetActive(false);
 
@@ -431,6 +447,7 @@ public class LevelManager : MonoBehaviour
 
 
     }
+
 
 
 
@@ -801,13 +818,16 @@ public class LevelManager : MonoBehaviour
 
     void SetHandDirection(float timer) // Randomly setting directions, from which a hand is coming
     {
-        StartCoroutine(SettingDirection(timer));
+
+        if (!isChangingHand) StartCoroutine(SettingDirection(timer));
     }
 
 
 
     IEnumerator SettingDirection(float timer) // Choosing randomely, from which direction "customer's hand" will appear
     {
+
+        isChangingHand = true;
 
         void SetRight(bool active) //TODO: simplify 
         {
@@ -878,6 +898,8 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(ResetPushing());
 
         if (needTraining) ActivateTraining();
+
+        isChangingHand = false;
 
     }
 
