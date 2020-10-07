@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
@@ -13,6 +14,11 @@ public class Shop : MonoBehaviour
     [SerializeField] ParticleSystem selectionParticles;
 
     [SerializeField] bool usingDiamonds = false;
+
+    [SerializeField] Sprite drinkShop;
+    [SerializeField] Sprite tableShop;
+
+    [SerializeField] Image shopImage;
 
     Vector2 pointerPos;
 
@@ -37,9 +43,26 @@ public class Shop : MonoBehaviour
         }
     }
 
+
     public void ReturnToBar()
     {
         StartCoroutine(LoadingScene(0));
+    }
+
+
+    public void SwitchToDrinks()
+    {
+        if (shopImage.sprite == drinkShop) return;
+
+        shopImage.sprite = drinkShop;
+    }
+
+
+    public void SwitchToTables()
+    {
+        if (shopImage.sprite == tableShop) return;
+
+        shopImage.sprite = tableShop;
     }
 
 

@@ -13,6 +13,10 @@ public class Product : MonoBehaviour
 
     Vector3 defaultScale;
 
+    public enum Kinds { Drink, Table, Theme}
+
+    public Kinds kind = Kinds.Drink;
+
     private void Awake()
     {
         drink = transform.GetChild(0).gameObject.GetComponent<Rotation>();
