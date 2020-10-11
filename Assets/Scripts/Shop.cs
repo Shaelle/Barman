@@ -22,6 +22,8 @@ public class Shop : MonoBehaviour
 
     [SerializeField] Product[] drinks;
 
+    [SerializeField] Product[] tables;
+
     [SerializeField] RectTransform[] Lots;
 
 
@@ -33,6 +35,17 @@ public class Shop : MonoBehaviour
     void Start()
     {
         UpdateCoinsText();
+
+        foreach (Product product in tables)
+        {
+            product.Hide();
+        }
+
+        foreach (Product product in drinks)
+        {
+            product.Show();
+        }
+
     }
 
 
@@ -57,19 +70,33 @@ public class Shop : MonoBehaviour
 
     public void SwitchToDrinks()
     {
+
+        if (selectedProduct != null) selectedProduct.Deselect();
+        selectedProduct = null;
+
         if (shopImage.sprite == drinkShop) return;
 
         shopImage.sprite = drinkShop;
+
+        foreach (Product product in tables)
+        {
+            product.Hide();
+        }
 
         foreach (Product product in drinks)
         {
             product.Show();
         }
+
     }
 
 
     public void SwitchToTables()
     {
+
+        if (selectedProduct != null) selectedProduct.Deselect();
+        selectedProduct = null;
+
         if (shopImage.sprite == tableShop) return;
 
         shopImage.sprite = tableShop;
@@ -77,6 +104,11 @@ public class Shop : MonoBehaviour
         foreach (Product product in drinks)
         {
             product.Hide();
+        }
+
+        foreach (Product product in tables)
+        {
+            product.Show();
         }
 
     }

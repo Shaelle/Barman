@@ -68,21 +68,21 @@ public class Hand : MonoBehaviour
 
         paw.gameObject.SetActive(false);
 
-        int n = Random.Range(0, 100);
+        //int n = Random.Range(0, 100); // Disabled paw
 
-        if (n < pawChance)
-        {
-            paw.gameObject.SetActive(true);
-            activeHand = paw;
-        }
-        else
-        {
+        //if (n < pawChance)
+        //{
+        //    paw.gameObject.SetActive(true);
+        //    activeHand = paw;
+       // }
+       // else
+       // {
             int index = Random.Range(0, hands.Length);
 
             hands[index].gameObject.SetActive(true);
 
             activeHand = hands[index];
-        }
+       // }
 
 
     }

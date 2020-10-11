@@ -177,7 +177,7 @@ public class LevelManager : MonoBehaviour
 
     public bool isRemovingDrink = false;
 
-
+    
   
     private void Awake()
     {
@@ -224,6 +224,17 @@ public class LevelManager : MonoBehaviour
     }
 
 
+
+    public void StopMusic()
+    {
+        startMelody.gameObject.SetActive(false);
+    }
+
+    public void StartMusic()
+    {
+        startMelody.gameObject.SetActive(true);
+    }
+
     public void Initlevel() // Initializing level with default values
     {
 
@@ -257,7 +268,7 @@ public class LevelManager : MonoBehaviour
         }
 
 
-        startMelody.gameObject.SetActive(true);
+        startMelody.gameObject.SetActive(Settings.music);
 
         goodCount = 0;
         badCount = 0;
@@ -998,7 +1009,7 @@ public class LevelManager : MonoBehaviour
         {
             brokenCount++;
 
-            Handheld.Vibrate();
+            if (Settings.vibration) Handheld.Vibrate();
 
             if (level == 1 && goodCount == 0) needTraining = true;
 
@@ -1074,7 +1085,7 @@ public class LevelManager : MonoBehaviour
         else
         {
 
-            Handheld.Vibrate();
+            if (Settings.vibration) Handheld.Vibrate();
 
             if (Random.Range(0,100) <= smilesChance) angryParticles.Play();
 

@@ -16,6 +16,9 @@ public class Product : MonoBehaviour
 
     Vector3 defaultScale;
 
+
+    bool isVisible = false;
+
     
 
     public enum Kinds { Drink, Table, Theme}
@@ -50,36 +53,66 @@ public class Product : MonoBehaviour
 
     void UpdatePriceTag()
     {
-        if (PlayerPrefs.GetInt(drink.kind.ToString(), 0) == 1) // Drink already purchased - remove from list
+        switch (kind)
         {
-            sold = true;
-            priceTag.text = "sold";
+            case Kinds.Drink:
+
+                if (PlayerPrefs.GetInt(drink.kind.ToString(), 0) == 1) // Drink already purchased - remove from list
+                {
+                    sold = true;
+                    priceTag.text = "sold";
+                }
+                else
+                {
+                    sold = false;
+                    priceTag.text = price.ToString();
+                }
+
+                break;
+
+            case Kinds.Table:
+
+                sold = false;
+                priceTag.text = price.ToString();
+
+                break;
+
+            case Kinds.Theme:
+                break;
+            default:
+                break;
         }
-        else
-        {
-            sold = false;
-            priceTag.text = price.ToString();
-        }
+
+
+
     }
 
 
     public void Select()
     {
-        if (shop.selectedProduct != null) shop.selectedProduct.Deselect();
-        transform.localScale *= 1.5f;
+        if (isVisible)
+        {
+            if (shop.selectedProduct != null) shop.selectedProduct.Deselect();
+            transform.localScale *= 1.5f;
 
-        shop.selectedProduct = this;
+            shop.selectedProduct = this;
+        }
     }
 
 
     public void Deselect()
     {
-        transform.localScale = defaultScale;
+        if (isVisible)
+        {
+            transform.localScale = defaultScale;
+        }
     }
 
 
     public void Show()
     {
+        isVisible = true;
+
         drink.gameObject.SetActive(true);
         UpdatePriceTag();
     }
@@ -87,6 +120,9 @@ public class Product : MonoBehaviour
 
     public void Hide()
     {
+
+        isVisible = false;
+
         drink.gameObject.SetActive(false);
         priceTag.text = "";
     }
@@ -94,12 +130,28 @@ public class Product : MonoBehaviour
 
     public void Sell()
     {
-        PlayerPrefs.SetInt(drink.kind.ToString(), 1);
-        sold = true;
-        priceTag.text = "sold";
-        LevelManager.money -= price;
+        switch (kind)
+        {
+            case Kinds.Drink:
 
-        PlayerPrefs.SetInt(LevelManager.moneySaveName, LevelManager.money);
+                PlayerPrefs.SetInt(drink.kind.ToString(), 1);
+                sold = true;
+                priceTag.text = "sold";
+                LevelManager.money -= price;
+
+                PlayerPrefs.SetInt(LevelManager.moneySaveName, LevelManager.money);
+
+                break;
+            case Kinds.Table:
+
+
+                break;
+            case Kinds.Theme:
+                break;
+            default:
+                break;
+        }
+
 
     }
 

@@ -119,6 +119,10 @@ public class Gift : MonoBehaviour
         temp.a = 0.5f;
         image.color = temp;
 
+        LevelManager.diamonds++;
+
+        PlayerPrefs.SetInt(LevelManager.diamondsSaveName, LevelManager.diamonds);
+
         yield return new WaitForSeconds(pause);
 
         adding = false;

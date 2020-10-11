@@ -134,7 +134,7 @@ MonoBehaviour:
   RemoveToRight: 1
   isRemoving: 0
   removeSpeed: 3
-  pawChance: 5
+  pawChance: 1
 --- !u!95 &2993497996693120510
 Animator:
   serializedVersion: 3
