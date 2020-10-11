@@ -9,6 +9,7 @@ public class Miss : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (levelManager.isRemovingDrink) return;
 
         Drink drink = other.GetComponent<Drink>();
 

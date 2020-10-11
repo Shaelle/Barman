@@ -22,6 +22,8 @@ public class Shop : MonoBehaviour
 
     [SerializeField] Product[] drinks;
 
+    [SerializeField] RectTransform[] Lots;
+
 
     Vector2 pointerPos;
 

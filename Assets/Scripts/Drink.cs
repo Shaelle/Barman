@@ -9,6 +9,8 @@ public class Drink : MonoBehaviour
 
     public bool starterPack = false;
 
+    public int nom = 0;
+
     public float speed = 5f;
     [SerializeField] float sideSpeed = 5f;
 
@@ -20,9 +22,12 @@ public class Drink : MonoBehaviour
     [SerializeField] AudioSource start;
 
 
+    Rigidbody body;
+
+
     public bool correctOne = false;
 
-    public enum Kinds { Manhattan, Margarita, Mojito, OldFashion, Vodka, Drink1, Drink2, Cola, Cocoa}
+    public enum Kinds { Manhattan, Margarita, Mojito, OldFashion, Vodka, Drink1, Drink2, Cola, Cocoa, Coffee}
 
     public Kinds kind;
 
@@ -30,7 +35,14 @@ public class Drink : MonoBehaviour
     float currentSpeed;
     float acceleration = 0;
 
- 
+
+    private void Awake()
+    {
+        body = GetComponent<Rigidbody>();
+        if (body == null) Debug.LogError(name + " have no rigidbody.");
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +57,20 @@ public class Drink : MonoBehaviour
             currentSpeed -= acceleration;
             transform.Translate(-speed * Time.deltaTime, 0, currentSpeed * Time.deltaTime);
         }
+    }
+
+
+    public void EnableGravity()
+    {
+        body.useGravity = true;
+    }
+
+
+    public void DisableGravity()
+    {
+        body.useGravity = false;
+        body.velocity = Vector3.zero;
+        body.angularVelocity = Vector3.zero;
     }
 
 

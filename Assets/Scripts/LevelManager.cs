@@ -58,6 +58,9 @@ public class LevelManager : MonoBehaviour
     List<Drink> shuffledDrinksList;
 
 
+    int lastNom = -1;
+
+
     [SerializeField] Rotation[] targetMarks;
 
 
@@ -172,6 +175,8 @@ public class LevelManager : MonoBehaviour
 
     bool isFirstLaunch = false;
 
+    public bool isRemovingDrink = false;
+
 
   
     private void Awake()
@@ -223,6 +228,8 @@ public class LevelManager : MonoBehaviour
     {
 
         levelActive = false;
+
+        isRemovingDrink = false;
 
 
         foreach (Drink drink in allDrinks)
@@ -285,7 +292,7 @@ public class LevelManager : MonoBehaviour
     {
 
         levelActive = true;
-
+        
         if (isFirstLaunch)
         {
             PlayerPrefs.SetInt(firstLaunch, 0);
@@ -332,6 +339,8 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator Finishinglevel()
     {
+
+        yield return new WaitForSeconds(1f); // Pause so hand animations can finish to play
 
         int bad = brokenCount + badCount;
 
@@ -508,6 +517,7 @@ public class LevelManager : MonoBehaviour
                 
             }
 
+           
             touchedDrink = null;
 
         }
@@ -583,7 +593,7 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        target = activeHand.target.position;
+        target = activeHand.transform.position;
 
         training = true;
 
@@ -650,6 +660,8 @@ public class LevelManager : MonoBehaviour
                         touchedDrink = drink;
                         touchedStart = newPos;
 
+                        lastNom = touchedDrink.nom;
+
                         start = hit.point;
 
                         if (useTracers) StartCoroutine(SendTracer());
@@ -672,6 +684,10 @@ public class LevelManager : MonoBehaviour
     void PlaceDrinks() // Placing drinks on the table. Choosing the selected one.
     {
 
+        isRemovingDrink = false;
+
+        ReplaceUsedDrink();
+
         if (shuffledDrinksList == null)
         {
             foreach (Drink drink in drinks)
@@ -679,6 +695,7 @@ public class LevelManager : MonoBehaviour
                 drink.transform.position = Vector3.zero;
                 drink.transform.rotation = Quaternion.identity;
                 drink.SetDirection(0, 0);
+                drink.EnableGravity();
             }
         }
         else
@@ -688,6 +705,7 @@ public class LevelManager : MonoBehaviour
                 drink.transform.position = Vector3.zero;
                 drink.transform.rotation = Quaternion.identity;
                 drink.SetDirection(0, 0);
+                drink.EnableGravity();
             }
         }
 
@@ -723,6 +741,24 @@ public class LevelManager : MonoBehaviour
 
         HideTargets();
 
+    }
+
+
+    void ReplaceUsedDrink() // Replacing used drink with another
+    {
+        if (lastNom > -1 && shuffledDrinksList.Count > drinkSlots.Length)
+        {
+            int newNom = Random.Range(drinkSlots.Length, shuffledDrinksList.Count);
+
+            Drink temp = shuffledDrinksList[lastNom];
+            shuffledDrinksList[lastNom] = shuffledDrinksList[newNom];
+            shuffledDrinksList[newNom] = temp;
+
+            shuffledDrinksList[lastNom].nom = lastNom;
+            shuffledDrinksList[newNom].nom = newNom;
+
+            lastNom = -1;
+        }
     }
 
 
@@ -774,6 +810,12 @@ public class LevelManager : MonoBehaviour
         }
 
         shuffledDrinks = newArray;
+
+        for (int i = 0; i < shuffledDrinks.Length; i++)
+        {
+            shuffledDrinks[i].nom = i;
+        }
+
     }
 
 
@@ -797,6 +839,11 @@ public class LevelManager : MonoBehaviour
         }
 
         shuffledDrinksList = new List<Drink>(newArray);
+
+        for (int i = 0; i < shuffledDrinksList.Count; i++)
+        {
+            shuffledDrinksList[i].nom = i;
+        }
     }
 
 
@@ -911,12 +958,33 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator Reaching(Drink drink)
     {
+
+        drink.DisableGravity();
+
+        Transform drinkParent = drink.transform.parent;
+
         activeHand.Grab(drink.transform.position);
+
+        drink.transform.SetParent(activeHand.transform);
+
+        yield return new WaitForSeconds(0.2f);
+
 
         CheckHit(drink);
         UpdateScore();
 
+        isRemovingDrink = true;
+        activeHand.isRemoving = true;
+
         yield return new WaitForSeconds(0.7f);
+
+        drink.transform.parent = drinkParent;
+
+        activeHand.isRemoving = false;
+
+        activeHand.ResestAnimation();
+
+        //yield return new WaitForSeconds(0.7f);
 
 
         UpdateTable(Random.Range(minHandDelay, maxHandDelay));

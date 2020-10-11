@@ -22,6 +22,8 @@ public class Product : MonoBehaviour
 
     public Kinds kind = Kinds.Drink;
 
+    public RectTransform slot;
+
     private void Awake()
     {
         drink = transform.GetChild(0).gameObject.GetComponent<Rotation>();
@@ -33,6 +35,16 @@ public class Product : MonoBehaviour
     void Start()
     {
         UpdatePriceTag();
+
+        if (slot != null)
+        {
+
+            //Vector3 slotPos = Camera.main.ScreenToWorldPoint(slot.transform.position);
+            //transform.position = new Vector3(slotPos.x, slotPos.y, transform.position.z);
+
+            transform.position = new Vector3(slot.transform.position.x, slot.transform.position.y, transform.position.z);
+        }
+
     }
 
 

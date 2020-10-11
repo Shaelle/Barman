@@ -221,6 +221,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Product Drink1
       objectReference: {fileID: 0}
+    - target: {fileID: 6523152231719634515, guid: 7da217886defe3f49b68a0caa713ae83,
+        type: 3}
+      propertyPath: kind
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7303992754991210516, guid: 7da217886defe3f49b68a0caa713ae83,
         type: 3}
       propertyPath: m_LocalPosition.z

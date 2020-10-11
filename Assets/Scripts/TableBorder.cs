@@ -24,7 +24,7 @@ public class TableBorder : MonoBehaviour
         {
             drink.SetDirection(0, 0);
 
-              //Debug.Log("drink: " + drink.name);
+           //   Debug.Log("drink: " + drink.name);
         }
     }
 }
