@@ -37,7 +37,6 @@ public class Product : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        UpdatePriceTag();
 
         if (slot != null)
         {

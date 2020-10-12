@@ -41,10 +41,13 @@ public class Shop : MonoBehaviour
             product.Hide();
         }
 
+
         foreach (Product product in drinks)
         {
             product.Show();
         }
+
+
 
     }
 
