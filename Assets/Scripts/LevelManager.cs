@@ -235,7 +235,11 @@ public class LevelManager : MonoBehaviour
         }
 
 
-        if (isFirstLaunch) StartLevel();
+        if (isFirstLaunch)
+        {
+            //money += 1000; // For debugging
+            StartLevel();
+        }
 
 
     }
