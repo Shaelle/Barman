@@ -132,6 +132,12 @@ public class LevelManager : MonoBehaviour
     [SerializeField] float minHandDelay = 0;
     [SerializeField] float maxHandDelay = 1;
 
+    [SerializeField] Table[] tables;
+
+
+    public static Tables.Kind selectedTable = Tables.Kind.Default;
+
+    public const string selectedTableName = "SelectedTable";
 
     int goodCount = 0;
     int badCount = 0;
@@ -220,7 +226,18 @@ public class LevelManager : MonoBehaviour
         needTraining = (level == 1) ? true : false;
 
 
+        selectedTable = (Tables.Kind)PlayerPrefs.GetInt(selectedTableName, 0);
+
+
+        foreach (Table table in tables)
+        {
+            table.gameObject.SetActive(table.kind == selectedTable);
+        }
+
+
         if (isFirstLaunch) StartLevel();
+
+
     }
 
 
@@ -241,6 +258,8 @@ public class LevelManager : MonoBehaviour
         levelActive = false;
 
         isRemovingDrink = false;
+
+
 
 
         foreach (Drink drink in allDrinks)

@@ -31,6 +31,9 @@ public class Shop : MonoBehaviour
 
     public Product selectedProduct;
 
+
+    public 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -112,6 +115,7 @@ public class Shop : MonoBehaviour
         foreach (Product product in tables)
         {
             product.Show();
+            if (product.tableKind == LevelManager.selectedTable) product.Select();
         }
 
     }

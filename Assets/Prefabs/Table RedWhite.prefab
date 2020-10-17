@@ -81,6 +81,11 @@ PrefabInstance:
       propertyPath: price
       value: 900
       objectReference: {fileID: 0}
+    - target: {fileID: 1093333604956581291, guid: d7287b3d4ba469141aa0d3ba7f9e26a7,
+        type: 3}
+      propertyPath: tableKind
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1807546488388629781, guid: d7287b3d4ba469141aa0d3ba7f9e26a7,
         type: 3}
       propertyPath: m_Name
